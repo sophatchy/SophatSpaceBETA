@@ -27,8 +27,8 @@
                             muted: '#8E8E93'
                         }
                     },
-                    borderRadius: { 'ios': '20px', 'clinic': '24px' },
-                    boxShadow: { 'soft': '0 4px 20px rgba(0, 0, 0, 0.05)', 'floating': '0 10px 40px rgba(0, 0, 0, 0.08)' }
+                    borderRadius: { 'ios': '20px', 'clinic': '28px' },
+                    boxShadow: { 'soft': '0 4px 25px rgba(0, 0, 0, 0.04)', 'floating': '0 15px 50px rgba(0, 0, 0, 0.1)' }
                 }
             }
         }
@@ -41,28 +41,27 @@
 
     <style>
         body { background-color: #F2F2F7; color: #1C1C1E; -webkit-tap-highlight-color: transparent; font-size: 15px; }
-        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 0.5px solid rgba(0,0,0,0.05); }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 0.5px solid rgba(0,0,0,0.05); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .accordion-content { display: grid; grid-template-rows: 0fr; transition: grid-template-rows: 0.3s ease-out; }
         .accordion-content.open { grid-template-rows: 1fr; }
         .accordion-inner { overflow: hidden; }
         #pdf-wrapper { position: absolute; top: -9999px; left: -9999px; width: 800px; z-index: -1; }
-        .tap-scale:active { transform: scale(0.95); transition: transform 0.1s; }
+        .tap-scale:active { transform: scale(0.96); transition: transform 0.1s; }
         
-        /* Grid Menu Mobile */
-        .cat-tab { transition: all 0.2s; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .cat-tab-active { background-color: #007AFF !important; color: white !important; transform: scale(1.05); box-shadow: 0 4px 15px rgba(0, 122, 255, 0.2); }
+        /* Menu Optimization */
+        .cat-tab { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 16px; border: 1px solid rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .cat-tab-active { background-color: #007AFF !important; color: white !important; transform: scale(1.05); box-shadow: 0 8px 20px rgba(0, 122, 255, 0.2); }
         .cat-tab-active i { color: white !important; }
-        .cat-tab-active .icon-box { background-color: rgba(255,255,255,0.2) !important; }
 
         .sub-tab { transition: all 0.2s; flex: 1; text-align: center; }
         .sub-tab.active { background-color: #007AFF; color: white !important; font-weight: 900; }
         
-        .progress-ring { transition: stroke-dashoffset 0.5s ease; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .progress-ring { transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform: rotate(-90deg); transform-origin: 50% 50%; }
         
-        .checklist-scroll { max-height: calc(100vh - 440px); overflow-y: auto; padding-right: 2px; }
+        .checklist-scroll { max-height: calc(100vh - 460px); overflow-y: auto; padding-right: 2px; }
         @media (max-width: 1024px) {
-            .checklist-scroll { max-height: none; overflow-y: visible; padding-bottom: 160px; }
+            .checklist-scroll { max-height: none; overflow-y: visible; padding-bottom: 180px; }
         }
 
         .sticky-action-bar {
@@ -72,111 +71,171 @@
             right: 0;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(0,0,0,0.05);
-            z-index: 40;
+            border-top: 0.5px solid rgba(0,0,0,0.08);
+            z-index: 50;
             padding: 12px 16px;
-            box-shadow: 0 -4px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.05);
         }
+
+        .carousel-item { min-width: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
     <div id="app-ui" class="flex-grow">
+        <!-- Navbar -->
         <nav class="fixed top-0 left-0 right-0 z-50 glass-nav">
             <div class="max-w-6xl mx-auto px-4 flex justify-between h-14 items-center">
                 <div class="flex items-center gap-2 cursor-pointer tap-scale" onclick="window.location.reload()">
                     <div class="w-8 h-8 bg-clinic-primary rounded-xl flex items-center justify-center text-white shadow-md">
                         <i data-lucide="shield-plus" class="w-5 h-5"></i>
                     </div>
-                    <span class="font-black text-base text-gray-800 tracking-tight uppercase">SOPHAT</span>
+                    <span class="font-black text-base text-gray-800 tracking-tight uppercase">SOPHAT.SPACE</span>
                 </div>
                 <div class="flex gap-2">
                     <button onclick="openSupportModal()" class="w-9 h-9 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center tap-scale">
                         <i data-lucide="coffee" class="w-4 h-4"></i>
                     </button>
                     <div class="w-9 h-9 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center border border-gray-200">
-                        <i data-lucide="user" class="w-4 h-4"></i>
+                        <i data-lucide="user-check" class="w-4.5 h-4.5"></i>
                     </div>
                 </div>
             </div>
         </nav>
 
         <main class="max-w-7xl mx-auto pt-14 lg:pt-20">
-            <div class="px-3 py-3 lg:px-4">
-                <div id="category-bar" class="grid grid-cols-5 lg:flex lg:flex-col gap-1.5 lg:gap-2"></div>
+            
+            <!-- Hero Carousel with Auto Swipe -->
+            <div class="px-4 py-4 lg:hidden">
+                <div class="relative w-full overflow-hidden rounded-[24px] shadow-soft bg-white border border-gray-100">
+                    <div id="carousel-track" class="flex transition-transform duration-500 ease-in-out">
+                        <div class="carousel-item p-6 bg-gradient-to-br from-clinic-primary to-blue-600 text-white flex flex-col gap-2">
+                            <h2 class="text-lg font-black leading-tight">ការពារឯកជនភាព</h2>
+                            <p class="text-[11px] opacity-90 leading-relaxed">ទិន្នន័យរបស់អ្នកសុវត្ថិភាព ១០០%។ យើងមិនរក្សាទុកអ្វីទាំងអស់លើ Server។</p>
+                        </div>
+                        <div class="carousel-item p-6 bg-gradient-to-br from-clinic-secondary to-green-600 text-white flex flex-col gap-2">
+                            <h2 class="text-lg font-black leading-tight">សុវត្ថិភាពលុយកាក់</h2>
+                            <p class="text-[11px] opacity-90 leading-relaxed">ហាមផ្ដល់លេខ OTP ឬលេខកូដ PIN ទៅកាន់អ្នកដទៃទោះជាបុគ្គលិកធនាគារក៏ដោយ។</p>
+                        </div>
+                        <div class="carousel-item p-6 bg-gradient-to-br from-clinic-danger to-red-600 text-white flex flex-col gap-2">
+                            <h2 class="text-lg font-black leading-tight">ឆ្លើយតបបន្ទាន់</h2>
+                            <p class="text-[11px] opacity-90 leading-relaxed">បើត្រូវគេ Hack សូមប្តូរ Password និងបិទគណនីធនាគារភ្លាមៗ។</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Guide (How to Use) -->
+            <div class="px-4 mb-4">
+                <div class="bg-white p-4 rounded-[22px] border border-gray-100 shadow-sm">
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> របៀបប្រើប្រាស់
+                    </h3>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="text-center">
+                            <div class="w-7 h-7 rounded-full bg-blue-50 text-clinic-primary flex items-center justify-center font-black text-[11px] mx-auto mb-1">1</div>
+                            <p class="text-[9px] text-gray-500 font-bold leading-tight">ជ្រើសប្រធានបទ</p>
+                        </div>
+                        <div class="text-center border-x border-gray-50">
+                            <div class="w-7 h-7 rounded-full bg-blue-50 text-clinic-primary flex items-center justify-center font-black text-[11px] mx-auto mb-1">2</div>
+                            <p class="text-[9px] text-gray-500 font-bold leading-tight">ឆែកចំណុចការពារ</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-7 h-7 rounded-full bg-blue-50 text-clinic-primary flex items-center justify-center font-black text-[11px] mx-auto mb-1">3</div>
+                            <p class="text-[9px] text-gray-500 font-bold leading-tight">វិភាគរោគសញ្ញា</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid Category Menu (Mobile Fixed 5 Columns) -->
+            <div class="px-4 py-2 lg:px-4">
+                <div id="category-bar" class="grid grid-cols-5 lg:flex lg:flex-col gap-2 lg:gap-3">
+                    <!-- JS Generated categories -->
+                </div>
             </div>
 
             <div class="px-4 mt-2 lg:ml-72 lg:mr-80">
-                <div id="sub-category-container" class="bg-gray-200/50 p-1 rounded-xl flex gap-1 hidden mb-4 w-full"></div>
+                <!-- Platform Sub-Tabs -->
+                <div id="sub-category-container" class="bg-gray-200/50 p-1 rounded-xl flex gap-1 hidden mb-5 w-full shadow-inner">
+                    <!-- JS Generated sub-tabs -->
+                </div>
 
-                <div class="flex items-center justify-between mb-4 bg-white/60 p-3 rounded-2xl border border-white/40 sticky top-[56px] lg:top-0 z-30 backdrop-blur-md">
+                <!-- Section Header (Sticky) -->
+                <div class="flex items-center justify-between mb-4 bg-white/70 p-3 rounded-2xl border border-white/50 sticky top-[56px] lg:top-0 z-30 backdrop-blur-md">
                     <h2 id="active-title" class="text-base font-black text-gray-800 truncate uppercase tracking-tight">...</h2>
                     <div class="flex items-center gap-2">
-                        <span id="category-count" class="text-[10px] font-bold text-gray-400">0/0</span>
-                        <span id="category-progress-badge" class="px-2.5 py-1 bg-clinic-primary text-white text-[10px] font-black rounded-lg">0%</span>
+                        <span id="category-progress-badge" class="px-2.5 py-1 bg-clinic-primary text-white text-[10px] font-black rounded-lg shadow-sm">0%</span>
                     </div>
                 </div>
 
-                <div id="checklist-container" class="space-y-3 checklist-scroll no-scrollbar"></div>
+                <!-- Checklist Container -->
+                <div id="checklist-container" class="space-y-3.5 checklist-scroll no-scrollbar pb-20">
+                    <!-- Items Injected via JS -->
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- Desktop Sidebar Stats -->
+    <!-- Desktop Sidebar Control -->
     <aside class="hidden lg:block fixed right-4 top-20 w-72 space-y-4">
         <div class="bg-white p-6 rounded-clinic shadow-soft border border-gray-100">
-            <div class="text-center mb-6">
+            <div class="text-center mb-8">
                 <div class="relative inline-flex mb-4">
-                    <svg class="w-24 h-24">
-                        <circle class="text-gray-100 stroke-current" stroke-width="6" fill="transparent" r="42" cx="48" cy="48"/>
-                        <circle id="global-ring" class="text-clinic-primary stroke-current progress-ring" stroke-width="6" stroke-linecap="round" fill="transparent" r="42" cx="48" cy="48" stroke-dasharray="263.76" stroke-dashoffset="263.76"/>
+                    <svg class="w-28 h-28">
+                        <circle class="text-gray-50 stroke-current" stroke-width="7" fill="transparent" r="48" cx="56" cy="56"/>
+                        <circle id="global-ring" class="text-clinic-primary stroke-current progress-ring" stroke-width="7" stroke-linecap="round" fill="transparent" r="48" cx="56" cy="56" stroke-dasharray="301.44" stroke-dashoffset="301.44"/>
                     </svg>
-                    <span id="global-score-text" class="absolute inset-0 flex items-center justify-center text-2xl font-black">0%</span>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="global-score-text" class="text-2xl font-black text-gray-800 leading-none">0%</span>
+                        <span class="text-[8px] text-gray-400 uppercase font-black mt-1 tracking-widest">Digital Health</span>
+                    </div>
                 </div>
-                <h3 id="global-risk-label" class="text-xs font-black text-clinic-danger uppercase tracking-widest">High Risk</h3>
+                <h3 id="global-risk-label" class="text-xs font-black text-clinic-danger uppercase tracking-[0.2em]">High Risk</h3>
             </div>
             
-            <div class="space-y-3 pt-4 border-t border-gray-50">
-                <button onclick="analyzeSafety()" class="w-full py-4 bg-gray-900 text-white rounded-xl font-black tap-scale flex justify-center items-center gap-2 shadow-lg hover:bg-black transition-all">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-yellow-400"></i> វិភាគសុខភាព
+            <div class="space-y-4 pt-6 border-t border-gray-50">
+                <!-- Relocated Analyze Button (Above PDF) -->
+                <button onclick="analyzeSafety()" class="w-full py-4.5 bg-gray-900 text-white rounded-2xl font-black tap-scale flex justify-center items-center gap-2.5 shadow-xl hover:bg-black transition-all">
+                    <i data-lucide="sparkles" class="w-4.5 h-4.5 text-yellow-400"></i> វិភាគសុខភាព
                 </button>
-                <input type="text" id="user-name-desktop" placeholder="ឈ្មោះរបស់អ្នក..." class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold focus:ring-1 focus:ring-clinic-primary/20 outline-none">
-                <button onclick="downloadPDF()" class="w-full py-3 bg-white border border-gray-100 text-gray-700 rounded-xl font-bold tap-scale flex justify-center items-center gap-2 text-[10px] uppercase tracking-widest">
-                    <i data-lucide="file-down" class="w-4 h-4 text-clinic-primary"></i> Get PDF Audit
+                <input type="text" id="user-name-desktop" placeholder="ឈ្មោះអ្នកប្រើប្រាស់..." class="w-full bg-gray-50 border-none rounded-xl px-4 py-3.5 text-xs font-bold outline-none focus:ring-1 focus:ring-clinic-primary/20">
+                <button onclick="downloadPDF()" class="w-full py-4 bg-white border border-gray-100 text-gray-700 rounded-2xl font-black tap-scale flex justify-center items-center gap-2.5 text-[10px] uppercase shadow-sm">
+                    <i data-lucide="file-down" class="w-4.5 h-4.5 text-clinic-primary"></i> Get PDF Audit
                 </button>
             </div>
         </div>
     </aside>
 
-    <!-- Mobile Sticky Action Bar -->
+    <!-- Mobile Bottom Navigation Bar -->
     <div class="sticky-action-bar lg:hidden">
         <div class="flex-grow flex flex-col justify-center">
-            <span id="mobile-score-text" class="text-base font-black text-clinic-primary">0%</span>
-            <div class="h-1 bg-gray-100 rounded-full overflow-hidden w-full max-w-[80px]">
-                <div id="mobile-progress-bar" class="h-full bg-clinic-primary transition-all duration-500" style="width: 0%"></div>
+            <span id="mobile-score-text" class="text-xl font-black text-clinic-primary leading-none">0%</span>
+            <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden w-full max-w-[100px] mt-1">
+                <div id="mobile-progress-bar" class="h-full bg-clinic-primary transition-all duration-700" style="width: 0%"></div>
             </div>
         </div>
-        <div class="flex gap-2 w-2/3">
-            <button onclick="analyzeSafety()" class="flex-1 py-3 bg-gray-900 text-white rounded-xl font-black tap-scale flex items-center justify-center gap-2 text-xs shadow-lg">
+        <div class="flex gap-2.5 w-[65%]">
+            <button onclick="analyzeSafety()" class="flex-1 py-4 bg-gray-900 text-white rounded-2xl font-black tap-scale flex items-center justify-center gap-2 text-xs shadow-lg active:scale-95">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-yellow-400"></i> វិភាគ
             </button>
-            <button onclick="downloadPDF()" class="w-11 h-11 bg-clinic-primary text-white rounded-xl flex items-center justify-center shadow-lg"><i data-lucide="file-down" class="w-5 h-5"></i></button>
+            <button onclick="downloadPDF()" class="w-12 h-12 bg-clinic-primary text-white rounded-2xl flex items-center justify-center active:scale-95 shadow-lg"><i data-lucide="file-down" class="w-5.5 h-5.5"></i></button>
         </div>
     </div>
 
-    <!-- Recommendations Modal -->
+    <!-- Diagnostic Result Modal -->
     <div id="rec-modal" class="fixed inset-0 z-[100] hidden">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeRecModal()"></div>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-xl transition-opacity" onclick="closeRecModal()"></div>
         <div class="fixed inset-x-0 bottom-0 md:inset-0 md:flex md:items-center md:justify-center p-4 pointer-events-none">
-            <div class="bg-white w-full md:max-w-2xl rounded-t-[40px] md:rounded-[40px] shadow-2xl overflow-hidden pointer-events-auto relative flex flex-col max-h-[85vh] border border-gray-100">
+            <div class="bg-white w-full md:max-w-2xl rounded-t-[40px] md:rounded-[40px] shadow-2xl overflow-hidden pointer-events-auto relative flex flex-col max-h-[88vh] border border-gray-100">
                 <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                    <h3 class="text-base font-black flex items-center gap-2 uppercase tracking-tighter"><i data-lucide="activity" class="w-5 h-5 text-clinic-danger"></i> វិភាគរោគសញ្ញាឌីជីថល</h3>
-                    <button onclick="closeRecModal()" class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <h3 class="text-base font-black flex items-center gap-2.5 uppercase tracking-tighter text-clinic-danger"><i data-lucide="activity" class="w-5.5 h-5.5"></i> វិនិច្ឆ័យរោគសញ្ញាឌីជីថល</h3>
+                    <button onclick="closeRecModal()" class="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-400"><i data-lucide="x" class="w-4.5 h-4.5"></i></button>
                 </div>
-                <div id="modal-body" class="p-6 overflow-y-auto no-scrollbar bg-gray-50 flex-grow prose prose-sm max-w-none"></div>
-                <div class="p-5 border-t border-gray-100 bg-white flex gap-3">
+                <div id="modal-body" class="p-6 overflow-y-auto no-scrollbar bg-gray-50/50 flex-grow prose prose-sm max-w-none"></div>
+                <div class="p-5 border-t border-gray-100 bg-white flex gap-3.5">
                     <button onclick="closeRecModal()" class="flex-1 py-4 font-bold text-gray-500 bg-gray-100 rounded-2xl tap-scale">បិទ</button>
-                    <button onclick="downloadPDF()" class="flex-1 py-4 font-bold text-white bg-clinic-primary rounded-2xl shadow-lg tap-scale">Save PDF</button>
+                    <button onclick="downloadPDF()" class="flex-1 py-4 font-bold text-white bg-clinic-primary rounded-2xl shadow-xl tap-scale uppercase text-[10px] tracking-widest font-black">Save Report</button>
                 </div>
             </div>
         </div>
@@ -184,6 +243,9 @@
 
     <script>
         const apiKey = ""; 
+        let currentSlide = 0;
+        let slideInterval;
+
         const categories = [
             { id: 'social', icon: 'share-2', label: 'សង្គម', color: 'bg-blue-500', subs: [{id:'fb', label:'Facebook'}, {id:'tt', label:'TikTok'}, {id:'tg', label:'Telegram'}] },
             { id: 'identity', icon: 'shield-check', label: 'គណនី', color: 'bg-indigo-500' },
@@ -197,210 +259,246 @@
             { id: 'response', icon: 'life-buoy', label: 'បន្ទាន់', color: 'bg-red-500' }
         ];
 
+        // FULL DATABASE (210+ UNIQUE ITEMS)
         const checklistData = [
-            // FACEBOOK (10)
-            { catId: 'social', subId: 'fb', group: 'FB Security', items: [
-                { id: 'fb1', title: '2FA Enabled', sub: 'បើកលេខកូដ ២ តង់លើ FB Tune In', risk: 'Hacker ចូលបានទោះដឹង Password Tune In', rec: 'ប្រើ App Authenticator' },
+            // FB (10)
+            { catId: 'social', subId: 'fb', group: 'Facebook Integrity', items: [
+                { id: 'fb1', title: '2FA Enabled', sub: 'បើកលេខកូដ ២ តង់លើ FB ជានិច្ច Tune In', urgent: true, risk: 'Hacker ចូលបានទោះដឹង Password Tune In', rec: 'ប្រើ App Authenticator' },
                 { id: 'fb2', title: 'Login Alerts', sub: 'ទទួលសាររាល់ពេលមានអ្នក Login Tune In', risk: 'មានគេលួចចូល យើងមិនដឹងខ្លួន Tune In', rec: 'បើក Alerts ក្នុង Security settings' },
                 { id: 'fb3', title: 'Audience Control', sub: 'កំណត់អ្នកមើល Post ត្រឹម Friends Tune In', risk: 'ជនប្លែកមុខតាមដានជីវិតអ្នក Tune In', rec: 'ឆែក Privacy Checkup ក្នុង FB' },
                 { id: 'fb4', title: 'Tagging Review', sub: 'ពិនិត្យរាល់ការ Tag មុនបង្ហាញលើ Wall Tune In', risk: 'ជនមិនល្អបង្ហោះរឿងមិនល្អលើ Profile Tune In', rec: 'បើក Review Tags ក្នុង settings' },
                 { id: 'fb5', title: 'Page Transparency', sub: 'ឆែក Page មុននឹងជឿជាក់ការវិនិយោគ Tune In', urgent: true, risk: 'ចាញ់បោកការវិនិយោគក្លែងក្លាយ Tune In', rec: 'មើលកាលបរិច្ឆេទបង្កើត Page' },
                 { id: 'fb6', title: 'Phishing Check', sub: 'មិនចុច Link ប្លែកៗក្នុង Comment Tune In', urgent: true, risk: 'Link លួចយក Password ឬមេរោគ Tune In', rec: 'ហាមចុច Link ផ្តល់របស់ Free ហួសហេតុ' },
                 { id: 'fb7', title: 'Session Cleanup', sub: 'Logout ឧបករណ៍មិនស្គាល់ចេញឱ្យអស់ Tune In', risk: 'Hacker កំពុងតាមដានឆាតអ្នក Tune In', rec: 'ពិនិត្យ Active Sessions ក្នុង Security' },
-                { id: 'fb8', title: 'Connected App audit', sub: 'លុប App មិនស្គាល់ដែលភ្ជាប់ជាមួយ FB Tune In', risk: 'App ខ្លះលួចទិន្នន័យអ្នករាល់ថ្ងៃ Tune In', rec: 'Settings > Apps and Websites' },
-                { id: 'fb9', title: 'Contact Privacy set', sub: 'លាក់លេខទូរស័ព្ទ និង Email ក្នុង Bio Tune In', risk: 'ជនបោកប្រាស់យកទៅទាយ Password Tune In', rec: 'ដាក់ "Only Me" លើព័ត៌មានទំនាក់ទំនង' },
-                { id: 'fb10', title: 'Profile Locking', sub: 'ប្រើមុខងារ Lock Profile ឱ្យជិត Tune In', risk: 'គេលួចយករូបភាពទៅបន្លំខ្លួន Tune In', rec: 'បើកមុខងារ Lock ក្នុង Profile' }
-            ]},
-            // TIKTOK (10)
-            { catId: 'social', subId: 'tt', group: 'TikTok Safety', items: [
-                { id: 'tt1', title: '2-Step verification', sub: 'បើកលេខកូដផ្ទៀងផ្ទាត់ពេលប្តូរឧបករណ៍ Tune In', urgent: true, risk: 'ងាយត្រូវគេលួចយកគណនី Tune In', rec: 'Settings > Security > 2-Step' },
-                { id: 'tt2', title: 'Live Scam aware', sub: 'មិនជឿលើការចែករង្វាន់ក្នុង Live Tune In', urgent: true, risk: 'បោកយក OTP ឬលេខកាត Tune In', rec: 'កុំចុច Link ក្នុង Bio ជនមិនស្គាល់' },
-                { id: 'tt3', title: 'Private Mode', sub: 'កំណត់ Private Account បើមិនចង់ឱ្យគេតាមដាន Tune In', risk: 'នរណាក៏អាចមើលសកម្មភាពអ្នកបាន Tune In', rec: 'Settings > Privacy > Private' },
-                { id: 'tt4', title: 'DM Restriction', sub: 'កំណត់អ្នកដែលអាចផ្ញើសារមកអ្នក Tune In', risk: 'ជនបោកប្រាស់ផ្ញើ Link បោកតាមឆាត Tune In', rec: 'ដាក់ Direct Messages ត្រឹម Friends' },
-                { id: 'tt5', title: 'Duet Privacy', sub: 'កំណត់អ្នកដែលអាច Duet ជាមួយអ្នក Tune In', risk: 'ជនមិនល្អយកវីដេអូទៅកាត់តបន្លំ Tune In', rec: 'កំណត់ឱ្យឃើញត្រឹម Friends' },
-                { id: 'tt6', title: 'Profile View history', sub: 'បិទ Profile view បើចង់បាន Privacy Tune In', risk: 'ជនខិលខូចដឹងថាអ្នកតាមដានគេ Tune In', rec: 'បិទក្នុង Privacy settings' },
-                { id: 'tt7', title: 'Algorithm Refresh', sub: 'សម្អាត Feed រាល់ពេលឃើញ Content មិនល្អ Tune In', risk: 'TikTok បង្ហាញតែរឿងអវិជ្ជមានឱ្យអ្នក Tune In', rec: 'ប្រើមុខងារ Refresh your feed' },
-                { id: 'tt8', title: 'Ad awareness check', sub: 'មិនទិញឥវ៉ាន់តាម Ad ដែលមិនច្បាស់ Tune In', risk: 'ចាញ់បោកទិញរបស់មិនបានរបស់ Tune In', rec: 'ឆែកមើល Rating ហាងឱ្យច្បាស់' },
-                { id: 'tt9', title: 'Live Monitor check', sub: 'ឆែកមើលឧបករណ៍ដែលកំពុង Live គណនីអ្នក Tune In', risk: 'មានគេលួចប្រើគណនីបង្ហោះរឿងមិនល្អ Tune In', rec: 'Security > Manage devices' },
-                { id: 'tt10', title: 'Comment Filter set', sub: 'បើកមុខងារចម្រោះពាក្យមិនសមរម្យ Tune In', risk: 'ប៉ះពាល់ផ្លូវចិត្តដោយសារពាក្យជេរ Tune In', rec: 'ប្រើ Keyword Filters ក្នុង Privacy' }
-            ]},
-            // TELEGRAM (10)
-            { catId: 'social', subId: 'tg', group: 'Telegram Health', items: [
-                { id: 'tg1', title: 'Two-Step Verification', sub: 'ដាក់លេខសម្ងាត់ជាន់ទី ២ បន្ថែមលើ SMS Tune In', urgent: true, risk: 'គេលួចស៊ីម គេនឹងចូល Telegram អ្នកបាន Tune In', rec: 'Privacy > Two-Step Verification' },
-                { id: 'tg2', title: 'Hide Phone Number', sub: 'លាក់លេខទូរស័ព្ទកុំឱ្យអ្នកដទៃឃើញ Tune In', urgent: true, risk: 'ជនខិលខូចងាយ Add ចូលគ្រុបបោកប្រាស់ Tune In', rec: 'Privacy > Phone Number > Nobody' },
-                { id: 'tg3', title: 'Terminate Sessions', sub: 'ពិនិត្យឧបករណ៍ដែលកំពុងជាប់ Telegram Tune In', risk: 'Hacker កំពុងតាមដានឆាតអ្នក Tune In', rec: 'Devices > Terminate all other sessions' },
-                { id: 'tg4', title: 'No APK Files', sub: 'មិនដំឡើង File ឬ APK ប្លែកៗពីគ្រុប Tune In', urgent: true, risk: 'មេរោគបញ្ជាទូរស័ព្ទ និងលួចលេខកូដ Tune In', rec: 'ហាមដំឡើង App ក្រៅ Store ផ្លូវការ' },
-                { id: 'tg5', title: 'Passcode Lock set', sub: 'ដាក់សោរកម្មវិធី Telegram (Passcode) Tune In', risk: 'គេខ្ចីទូរស័ព្ទ គេអាចលួចមើលឆាត Tune In', rec: 'Privacy > Passcode Lock' },
-                { id: 'tg6', title: 'Group Add limitation', sub: 'កំណត់អ្នកដែលអាច Add អ្នកចូលគ្រុប Tune In', risk: 'ត្រូវគេអូសចូលគ្រុបល្បែង ឬបោកប្រាស់ Tune In', rec: 'Privacy > Groups > My Contacts' },
-                { id: 'tg7', title: 'Secret Chat usage', sub: 'ប្រើ Secret Chat សម្រាប់រឿងសម្ងាត់បំផុត Tune In', risk: 'ឆាតធម្មតាអាចត្រូវបាន Backup លើ Server Tune In', rec: 'បើកមុខងារ Self-destruct timer' },
-                { id: 'tg8', title: 'Forwarding privacy', sub: 'លាក់ឈ្មោះដើមពេលគេ Forward សារអ្នក Tune In', risk: 'ជនមិនស្ស្ាល់ដឹងពី Account ពិតរបស់អ្នក Tune In', rec: 'Privacy > Forwarded Messages' },
-                { id: 'tg9', title: 'Voice Call Privacy', sub: 'បិទការខលពីជនចម្លែកក្នុង Telegram Tune In', risk: 'ជនបោកប្រាស់តេមកគំរាមកំហែង Tune In', rec: 'Privacy > Calls > My Contacts' },
-                { id: 'tg10', title: 'Profile Photo Hide', sub: 'កំណត់អ្នកដែលអាចមើលរូប Profile Tune In', risk: 'គេយករូបអ្នកទៅបន្លំខ្លួនបោកមិត្តភក្តិ Tune In', rec: 'Privacy > Profile Photos > My Contacts' }
+                { id: 'fb8', title: 'Connected App Audit', sub: 'លុប App មិនស្គាល់ដែលភ្ជាប់ជាមួយ FB Tune In', risk: 'App ខ្លះលួចទិន្នន័យអ្នករាល់ថ្ងៃ Tune In', rec: 'Settings > Apps and Websites' },
+                { id: 'fb9', title: 'Contact Privacy Set', sub: 'លាក់លេខទូរស័ព្ទ និង Email ក្នុង Bio Tune In', risk: 'ជនបោកប្រាស់យកទៅទាយ Password Tune In', rec: 'ដាក់ "Only Me" លើព័ត៌មានទំនាក់ទំនង' },
+                { id: 'fb10', title: 'Profile Locking', sub: 'ប្រើមុខងារ Lock Profile ដើម្បីការពាររូបភាព Tune In', risk: 'គេលួចយករូបភាពទៅបន្លំខ្លួន Tune In', rec: 'បើកមុខងារ Lock ក្នុង Profile' }
             ]},
             // IDENTITY (15)
-            { catId: 'identity', group: 'ID & Account Protection', items: [
+            { catId: 'identity', group: 'Digital ID Protection', items: [
                 { id: 'id1', title: '12+ Char Passwords', sub: 'Password វែង និងមានសញ្ញាពិសេស Tune In', urgent: true, risk: 'Hacker ទាយដឹងក្នុងរយៈពេលខ្លី Tune In', rec: 'ប្រើ Password វែង និងពិបាកទាយ' },
                 { id: 'id2', title: 'No Reuse Policy', sub: 'មិនប្រើ Password ដូចគ្នាសម្រាប់គ្រប់ App Tune In', urgent: true, risk: 'Hacker ចូលបានមួយ បានទាំងអស់ Tune In', rec: 'ប្រើ Password ផ្សេងគ្នាជានិច្ច' },
-                { id: 'id3', title: 'Password Manager use', sub: 'ប្រើកម្មវិធីគ្រប់គ្រងលេខសម្ងាត់ Tune In', risk: 'ភ្លេច Password នាំឱ្យបាត់បង់ Account Tune In', rec: 'ប្រើ Google Password Manager' },
-                { id: 'id4', title: 'Authenticator App set', sub: 'ប្រើ App ជំនួសឱ្យ SMS សម្រាប់ទទួលកូដ Tune In', risk: 'គេអាចលួចស៊ីមដើម្បីទទួលកូដ OTP Tune In', rec: 'ប្រើ Google Authenticator' },
-                { id: 'id5', title: 'Recovery Validation audit', sub: ' Email និងលេខទូរស័ព្ទសង្គ្រោះនៅប្រើបាន Tune In', urgent: true, risk: 'បាត់បង់ Account រហូតពេលភ្លេច Password Tune In', rec: 'ឆែកមើលរាល់ ៦ ខែម្តង' },
+                { id: 'id3', title: 'Password Manager', sub: 'ប្រើកម្មវិធីគ្រប់គ្រងលេខសម្ងាត់ Tune In', risk: 'ភ្លេច Password នាំឱ្យបាត់បង់ Account Tune In', rec: 'ប្រើ Google Password Manager' },
+                { id: 'id4', title: 'Authenticator Apps', sub: 'ប្រើ App ជំនួសឱ្យ SMS សម្រាប់ទទួលកូដ Tune In', risk: 'គេអាចលួចស៊ីមដើម្បីទទួលកូដ OTP Tune In', rec: 'ប្រើ Google Authenticator' },
+                { id: 'id5', title: 'Recovery Validation', sub: 'Email និងលេខទូរស័ព្ទសង្គ្រោះនៅប្រើបាន Tune In', urgent: true, risk: 'បាត់បង់ Account រហូតពេលភ្លេច Password Tune In', rec: 'ឆែកមើលរាល់ ៦ ខែម្តង' },
                 { id: 'id6', title: 'Backup Codes Secure', sub: 'រក្សាទុកកូដសង្គ្រោះកន្លែងមានសុវត្ថិភាព Tune In', risk: 'ពេលបាត់ទូរស័ព្ទ នឹងចូល Account លែងកើត Tune In', rec: 'កត់ទុកក្នុងក្រដាស ឬកន្លែងសម្ងាត់' },
-                { id: 'id7', title: 'Avoid Social Logins', sub: 'កាត់បន្ថយការប្រើ Sign in with FB/Google Tune In', risk: 'បើ Account មេត្រូវបិទ នឹងបាត់គ្រប់ App Tune In', rec: 'ប្រើ Email និង Password ផ្ទាល់ខ្លួន' },
-                { id: 'id8', title: 'Selfie ID Safety habit', sub: 'មិនផ្តល់រូប Selfie ជាមួយ ID ឱ្យ Web មិនច្បាស់ Tune In', urgent: true, risk: 'គេយកអត្តសញ្ញាណអ្នកទៅខ្ចីលុយ ឬបោកគេ Tune In', rec: 'ផ្ទៀងផ្ទាត់ App ឱ្យច្បាស់មុនផ្តល់ទិន្នន័យ' },
-                { id: 'id9', title: 'Cleanup Inactive accounts', sub: 'លុប Account ចាស់ៗដែលមិនប្រើចោល Tune In', risk: 'គណនីចាស់ជាទ្វារចំហសម្រាប់ Hacker Tune In', rec: 'បិទគណនីណាដែលឈប់ប្រើលើសពី ១ ឆ្នាំ' },
+                { id: 'id7', title: 'Avoid Social Login', sub: 'កាត់បន្ថយការប្រើ Sign in with FB/Google Tune In', risk: 'បើ Account មេត្រូវបិទ នឹងបាត់គ្រប់ App Tune In', rec: 'ប្រើ Email និង Password ផ្ទាល់ខ្លួន' },
+                { id: 'id8', title: 'Selfie ID Safety', sub: 'មិនផ្តល់រូប Selfie ជាមួយ ID ឱ្យ Web មិនច្បាស់ Tune In', urgent: true, risk: 'គេយកអត្តសញ្ញាណអ្នកទៅខ្ចីលុយ ឬបោកគេ Tune In', rec: 'ផ្ទៀងផ្ទាត់ App ឱ្យច្បាស់មុនផ្តល់ទិន្នន័យ' },
+                { id: 'id9', title: 'Cleanup Inactive', sub: 'លុប Account ចាស់ៗដែលមិនប្រើចោល Tune In', risk: 'គណនីចាស់ជាទ្វារចំហសម្រាប់ Hacker Tune In', rec: 'បិទគណនីណាដែលឈប់ប្រើលើសពី ១ ឆ្នាំ' },
                 { id: 'id10', title: 'Google Security scan', sub: 'ធ្វើតេស្តសុវត្ថិភាព Google Account ជាប្រចាំ Tune In', risk: 'មានឧបករណ៍មិនស្គាល់កំពុងប្រើ Gmail Tune In', rec: 'myaccount.google.com/security-checkup' },
-                { id: 'id11', title: 'Spelling in Profile names', sub: 'មិនដាក់ឈ្មោះពិត និងថ្ងៃកំណើតជាសាធារណៈ Tune In', risk: 'ជនបោកប្រាស់យកទៅទាយ Password Tune In', rec: 'ដាក់ឈ្មោះក្រៅ ឬ ឈ្មោះកាត់' },
-                { id: 'id12', title: 'Email Forward Audit set', sub: 'ឆែកមើលថាមានគេលួច Forward Email ឬអត់ Tune In', risk: 'Hacker ទទួលបានរាល់ Email របស់អ្នក Tune In', rec: 'ពិនិត្យ Rules ក្នុង Gmail settings' },
-                { id: 'id13', title: 'Autofill Security set', sub: 'បិទការចងចាំ Password ក្នុង Shared Browser Tune In', risk: 'អ្នកដទៃអាចចូល Account អ្នកបានភ្លាម Tune In', rec: 'Settings > Autofill > Off' },
-                { id: 'id14', title: 'Digital Trace scan set', sub: 'Search ឈ្មោះខ្លួនឯងលើ Google រាល់ ៣ ខែ Tune In', risk: 'មានព័ត៌មានមិនល្អ ឬអត្តសញ្ញាណបែកធ្លាយ Tune In', rec: 'ស្នើសុំលុយព័ត៌មានដែលប៉ះពាល់' },
-                { id: 'id15', title: 'SIM PIN Lock set', sub: 'ដាក់លេខកូដសោរលើស៊ីមទូរស័ព្ទ Tune In', urgent: true, risk: 'គេបន្លំយកស៊ីមអ្នកទៅប្តូរ Password អ្នក Tune In', rec: 'Settings > Security > SIM PIN' }
+                { id: 'id11', title: 'Real Name Privacy', sub: 'មិនដាក់ឈ្មោះពិត និងថ្ងៃកំណើតជាសាធារណៈ Tune In', risk: 'ជនបោកប្រាស់យកទៅទាយ Password Tune In', rec: 'ដាក់ឈ្មោះក្រៅ ឬ ឈ្មោះកាត់' },
+                { id: 'id12', title: 'Email Forward Audit', sub: 'ឆែកមើលថាមានគេលួច Forward Email ឬអត់ Tune In', risk: 'Hacker ទទួលបានរាល់ Email របស់អ្នក Tune In', rec: 'ពិនិត្យ Rules ក្នុង Gmail settings' },
+                { id: 'id13', title: 'Autofill Security Off', sub: 'បិទការចងចាំ Password ក្នុង Shared Browser Tune In', risk: 'អ្នកដទៃអាចចូល Account អ្នកបានភ្លាម Tune In', rec: 'Settings > Autofill > Off' },
+                { id: 'id14', title: 'Digital Trace scan', sub: 'Search ឈ្មោះខ្លួនឯងលើ Google រាល់ ៣ ខែ Tune In', risk: 'មានព័ត៌មានមិនល្អ ឬអត្តសញ្ញាណបែកធ្លាយ Tune In', rec: 'ស្នើសុំលុយព័ត៌មានដែលប៉ះពាល់' },
+                { id: 'id15', title: 'SIM Card PIN lock', sub: 'ដាក់លេខកូដសោរលើស៊ីមទូរស័ព្ទ Tune In', urgent: true, risk: 'គេបន្លំយកស៊ីមអ្នកទៅប្តូរ Pass ធនាគារ Tune In', rec: 'Settings > Security > SIM PIN' }
             ]},
-            // BANKING (10)
+            // BANKING (10 UNIQUE)
             { catId: 'finance', subId: 'banking', group: 'Mobile Banking', items: [
-                { id: 'bk1', title: 'Official Store Download', sub: 'ដំឡើង App ធនាគារតែពី Store ផ្លូវការ Tune In', urgent: true, risk: 'App ក្លែងក្លាយលួចលេខកូដ និងទឹកប្រាក់ Tune In', rec: 'ប្រើតែ App Store ឬ Play Store' },
-                { id: 'bk2', title: 'Transaction alerts', sub: 'បើកការជូនដំណឹងរាល់ការផ្ទេរលុយ Tune In', risk: 'មានការលួចដកលុយ យើងមិនដឹងខ្លួន Tune In', rec: 'បើក Notificationក្នុង App ជានិច្ច' },
-                { id: 'bk3', title: 'Device Binding policy', sub: 'ភ្ជាប់ Account តែជាមួយទូរស័ព្ទផ្ទាល់ខ្លួន Tune In', risk: 'Hacker ប្រើឧបករណ៍ផ្សេងលួចលុយ Tune In', rec: 'ពិនិត្យ Trusted Devices ក្នុង App' },
-                { id: 'bk4', title: 'Payee verification', sub: 'ផ្ទៀងផ្ទាត់ឈ្មោះអ្នកទទួលឱ្យច្បាស់មុនផ្ញើ Tune In', urgent: true, risk: 'ផ្ញើលុយឱ្យជនបោកប្រាស់ ឬខុសមនុស្ស Tune In', rec: 'មើលឈ្មោះឱ្យត្រូវនឹងអត្តសញ្ញាណ' },
-                { id: 'bk5', title: 'Daily Limit Control', sub: 'កំណត់ទឹកប្រាក់ផ្ទេរចេញក្នុងមួយថ្ងៃឱ្យទាប Tune In', risk: 'បើត្រូវបោក នឹងបាត់បង់លុយច្រើន Tune In', rec: 'កំណត់ក្នុង App Settings ឱ្យសមស្រប' },
-                { id: 'bk6', title: 'No WiFi for Banking', sub: 'មិនប្រើ WiFi ហាងកាហ្វេដើម្បីផ្ទេរលុយ Tune In', risk: 'Hacker អាចលួចយកព័ត៌មានធនាគារ Tune In', rec: 'ប្រើ Internet ទូរស័ព្ទផ្ទាល់ខ្លួន' },
-                { id: 'bk7', title: 'Manual Sign-out habit', sub: 'Logout រាល់ពេលប្រើប្រាស់រួចរាល់ Tune In', risk: 'Account នៅចំហរ ងាយរងគ្រោះបំផុត Tune In', rec: 'ទម្លាប់ Logout ជានិច្ចមុនបិទ App' },
-                { id: 'bk8', title: 'No Phone OTP call', sub: 'មិនប្រាប់ OTP ឱ្យអ្នកតេមកបន្លំជាបុគ្គលិក Tune In', urgent: true, risk: 'គេនឹងដកលុយចេញពីកុងអ្នកភ្លាមៗ Tune In', rec: 'ធនាគារមិនដែលសុំ OTP តាមទូរស័ព្ទទេ' },
-                { id: 'bk9', title: 'Biometrics Active', sub: 'ប្រើការស្កេនម្រាមដៃ ឬមុខដើម្បីចូល App Tune In', risk: 'គេលួចមើលលេខកូដ PIN ពេលអ្នកចុច Tune In', rec: 'បើកមុខងារ FaceID ឬ Fingerprint' },
-                { id: 'bk10', title: 'Hotline Backup list', sub: 'កត់លេខ Hotline ធនាគារទុកកន្លែងផ្សេង Tune In', risk: 'រកលេខបិទកុងមិនឃើញពេលបាត់ទូរស័ព្ទ Tune In', rec: 'កត់លេខបិទកុងទុកក្នុងកាបូបលុយ' }
+                { id: 'bk1', title: 'Official Store Only', sub: 'ដំឡើង App តែពី Store ផ្លូវការប៉ុណ្ណោះ Tune In', urgent: true, risk: 'App ក្លែងក្លាយលួចលេខកូដ Tune In', rec: 'ប្រើតែ App Store/Play Store' },
+                { id: 'bk2', title: 'Real-time Alerts', sub: 'បើកការជូនដំណឹងរាល់ការផ្ទេរលុយ Tune In', risk: 'មានការលួចដកលុយ យើងមិនដឹងខ្លួន Tune In', rec: 'បើក Notification ក្នុង App ជានិច្ច' },
+                { id: 'bk3', title: 'Device Binding check', sub: 'ភ្ជាប់ Account តែជាមួយទូរស័ព្ទផ្ទាល់ខ្លួន Tune In', risk: 'Hacker ប្រើឧបករណ៍ផ្សេងលួចលុយ Tune In', rec: 'ពិនិត្យ Trusted Devices ក្នុង App' },
+                { id: 'bk4', title: 'Name Verification', sub: 'ផ្ទៀងផ្ទាត់ឈ្មោះអ្នកទទួលឱ្យច្បាស់មុនផ្ញើ Tune In', urgent: true, risk: 'ផ្ញើលុយឱ្យជនបោកប្រាស់ Tune In', rec: 'មើលឈ្មោះឱ្យត្រូវនឹងអត្តសញ្ញាណ' },
+                { id: 'bk5', title: 'Daily Limit Control', sub: 'កំណត់ទឹកប្រាក់ផ្ទេរចេញក្នុងមួយថ្ងៃឱ្យទាប Tune In', risk: 'បើត្រូវបោក នឹងបាត់បង់លុយច្រើន Tune In', rec: 'កំណត់ក្នុង App Settings' },
+                { id: 'bk6', title: 'No Public WiFi usage', sub: 'មិនប្រើ WiFi ហាងកាហ្វេដើម្បីផ្ទេរលុយ Tune In', risk: 'Hacker ស្ទាក់យកព័ត៌មានធនាគារ Tune In', rec: 'ប្រើ Internet ទូរស័ព្ទ 4G/5G' },
+                { id: 'bk7', title: 'Manual Sign-out set', sub: 'Logout រាល់ពេលប្រើប្រាស់រួចរាល់ Tune In', risk: 'Account នៅចំហរ ងាយរងគ្រោះបំផុត Tune In', rec: 'ទម្លាប់ Logout ជានិច្ច' },
+                { id: 'bk8', title: 'Phone Call Security', sub: 'មិនប្រាប់ OTP ឱ្យអ្នកតេមកបន្លំ Tune In', urgent: true, risk: 'គេនឹងដកលុយអ្នកអស់ភ្លាមៗ Tune In', rec: 'ធនាគារមិនដែលសុំ OTP តាមទូរស័ព្ទទេ' },
+                { id: 'bk9', title: 'Biometrics Active', sub: 'ប្រើការស្កេនម្រាមដៃចូល App Tune In', risk: 'គេលួចមើលលេខកូដ PIN ពេលអ្នកចុច Tune In', rec: 'បើកមុខងារ FaceID/Fingerprint' },
+                { id: 'bk10', title: 'Hotline Contact set', sub: 'កត់លេខ Hotline ធនាគារទុកកន្លែងផ្សេង Tune In', risk: 'រកលេខបិទកុងមិនឃើញពេលបាត់ទូរស័ព្ទ Tune In', rec: 'កត់លេខបិទកុងទុកក្នុងកាបូបលុយ' }
             ]},
-            // SMARTPHONE (10)
+            // SHOPPING (10 UNIQUE)
+            { catId: 'finance', subId: 'shopping', group: 'Online Shopping', items: [
+                { id: 'fs1', title: 'Seller Rating check', sub: 'ឆែក Rating និង Review ហាងឱ្យច្បាស់ Tune In', risk: 'ហាងបោកប្រាស់លួចលុយ រួចបិទចោល Tune In', rec: 'ទិញពីហាងដែលល្បី និងមាន Review ច្រើន' },
+                { id: 'fs2', title: 'Use Virtual Cards', sub: 'ប្រើកាតនិម្មិតសម្រាប់ការទិញ Online Tune In', urgent: true, risk: 'គេលួចលេខកាតដើម គេដកលុយអស់ Tune In', rec: 'បង្កើត Virtual Card ក្នុង App ធនាគារ' },
+                { id: 'fs3', title: 'HTTPS Website only', sub: 'ទិញឥវ៉ាន់លើ Web មានសញ្ញា 🔒 ជានិច្ច Tune In', risk: 'ព័ត៌មានកាតអាចត្រូវ Hacker លួចបាន Tune In', rec: 'មើលរបារអាសយដ្ឋាន Web ឱ្យច្បាស់' },
+                { id: 'fs4', title: 'Refund Policy check', sub: 'អានគោលការណ៍ប្តូរឥវ៉ាន់ឱ្យយល់ Tune In', risk: 'របស់ខូច មិនអាចដូរយកលុយវិញបាន Tune In', rec: 'ឆែកមើល Refund Policy មុនទិញ' },
+                { id: 'fs5', title: 'Fake SMS delivery', sub: 'មិនចុច Link ក្នុង SMS ឥវ៉ាន់ចម្លែក Tune In', urgent: true, risk: 'Link បោកយក Password ធនាគារអ្នក Tune In', rec: 'ឆែកលេខកូដឥវ៉ាន់ក្នុង App ផ្ទាល់' },
+                { id: 'fs6', title: 'Platform payment rule', sub: 'បង់លុយតាមរយៈប្រព័ន្ធក្នុង App ជានិច្ច Tune In', risk: 'ផ្ញើក្រៅប្រព័ន្ធ គ្មានអ្នកធានាឱ្យទេ Tune In', rec: 'ហាមផ្ទេរលុយផ្ទាល់ឱ្យអ្នកលក់ចម្លែក' },
+                { id: 'fs7', title: 'No Save Credentials', sub: 'មិនឱ្យ Browser ចងចាំលេខកាត Tune In', risk: 'អ្នកដទៃប្រើកាតអ្នកបានភ្លាម Tune In', rec: 'វាយលេខកាតថ្មីរាល់ពេលទិញ' },
+                { id: 'fs8', title: 'Receipt collection habit', sub: 'រក្សា Screenshot ភស្តុតាងបង់ប្រាក់ Tune In', risk: 'គ្មានភស្តុតាងពេលមានបញ្ហាជាមួយហាង Tune In', rec: 'ទុកក្នុង Album ដាច់ដោយឡែក' },
+                { id: 'fs9', title: 'Platform Protection check', sub: 'ប្រើ App ល្បីៗដែលមានទំនុកចិត្ត Tune In', risk: 'Web ក្លែងក្លាយលួចទិន្នន័យកាត Tune In', rec: 'ប្រើ Nham24, Foodpanda, ឬ Web ល្បី' },
+                { id: 'fs10', title: 'Billing Monitor habit', sub: 'ឆែកវិក្កយបត្រក្នុង Email ជាប្រចាំ Tune In', risk: 'មានការលួចកាត់លុយប្រចាំខែ Tune In', rec: 'Cancel សេវាណាដែលអ្នកមិនប្រើ' }
+            ]},
+            // WALLET (10 UNIQUE)
+            { catId: 'finance', subId: 'ewallet', group: 'e-Wallet Health', items: [
+                { id: 'ew1', title: 'Strong PIN habit', sub: 'មិនប្រើលេខ ១២៣៤ ឬ ថ្ងៃកំណើត Tune In', urgent: true, risk: 'បាត់ទូរស័ព្ទ គេផ្ទេរលុយអស់ភ្លាម Tune In', rec: 'ប្តូរ PIN ឱ្យពិបាកទាយបំផុត' },
+                { id: 'ew2', title: 'Active session audit', sub: 'ពិនិត្យឧបករណ៍ដែលភ្ជាប់ជាមួយ Wallet Tune In', risk: 'Hacker ប្រើឧបករណ៍ផ្សេងលួចលុយ Tune In', rec: 'Logout ឧបករណ៍មិនស្គាល់ចេញ' },
+                { id: 'ew3', title: 'Daily History Monitor', sub: 'ឆែកប្រវត្តិផ្ទេរលុយជារៀងរាល់ថ្ងៃ Tune In', risk: 'មានការលួចកាត់លុយតិចៗ យើងមិនដឹង Tune In', rec: 'ពិនិត្យ History ឱ្យទៀងទាត់' },
+                { id: 'ew4', title: 'Transfer Limit set', sub: 'កំណត់ Limit ផ្ទេរក្នុងមួយថ្ងៃឱ្យទាប Tune In', risk: 'បើត្រូវបោក នឹងបាត់បង់លុយតិច Tune In', rec: 'កំណត់ក្នុង App settings' },
+                { id: 'ew5', title: 'Verify Payee Name', sub: 'ផ្ទៀងផ្ទាត់ឈ្មោះមុនចុចផ្ញើ Tune In', risk: 'ផ្ញើខុសមនុស្ស ឬជនបោកប្រាស់ Tune In', rec: 'ឆែកមើលឈ្មោះឱ្យបាន ៣ ដង' },
+                { id: 'ew6', title: 'No Cash-in Scam', sub: 'មិនជឿការសន្យាថានឹងឱ្យលុយវិញ Tune In', urgent: true, risk: 'បោកយកលុយកាក់តាមរយៈឆាត Tune In', rec: 'កុំផ្ញើលុយឱ្យអ្នកដែលមិនស្គាល់' },
+                { id: 'ew7', title: 'App Updates commitment', sub: 'Update App កាបូបលុយជានិច្ច Tune In', risk: 'ចន្លោះប្រហោងចាស់នាំឱ្យ Hacker ចូល Tune In', rec: 'Update តាម Store ផ្លូវការ' },
+                { id: 'ew8', title: 'Personal Device Only', sub: 'ប្រើ Wallet តែលើទូរស័ព្ទផ្ទាល់ខ្លួន Tune In', risk: 'ប្រើលើទូរស័ព្ទគេ គេអាចលួចចូលបាន Tune In', rec: 'កុំ Login លើឧបករណ៍អ្នកដទៃ' },
+                { id: 'ew9', title: 'Wallet Scam Link aware', sub: 'មិនចុច Link ឈ្នះរង្វាន់ក្នុង Wallet Tune In', risk: 'Link លួចយក OTP និង Password Tune In', rec: 'ឆែកមើលលើ Page ផ្លូវការ' },
+                { id: 'ew10', title: 'Support Hotline list', sub: 'រក្សាលេខ Hotline សម្រាប់បិទ Wallet Tune In', risk: 'រកលេខបិទកុងមិនឃើញពេលបាត់ទូរស័ព្ទ Tune In', rec: 'កត់លេខទុកកន្លែងសម្ងាត់' }
+            ]},
+            // SMARTPHONE (10 UNIQUE)
             { catId: 'devices', subId: 'phone', group: 'Smartphone Hygiene', items: [
-                { id: 'p1', title: 'OS Update Policy', sub: 'ធ្វើបច្ចុប្បន្នភាព iOS/Android ជានិច្ច Tune In', urgent: true, risk: 'ចន្លោះប្រហោងចាស់នាំឱ្យ Hacker ចូល Tune In', rec: 'បើក Auto Update ក្នុង settings' },
-                { id: 'p2', title: 'Screen Lock Policy', sub: 'ដាក់លេខកូដយ៉ាងតិច ៦ ខ្ង់ និងស្កេនមុខ Tune In', urgent: true, risk: 'នរណាក៏អាចបើកមើលទិន្នន័យអ្នកបាន Tune In', rec: 'ប្រើ FaceID/Fingerprint' },
-                { id: 'p3', title: 'App Store usage only', sub: 'ដំឡើង App តែពី Store ផ្លូវការប៉ុណ្ណោះ Tune In', risk: 'App ខាងក្រៅមានបង្កប់មេរោគលួចទិន្នន័យ Tune In', rec: 'កុំដំឡើង App តាម Link ក្នុង Telegram' },
-                { id: 'p4', title: 'Permission Review set', sub: 'ពិនិត្យសិទ្ធិ App (Camera, Mic, Contacts) Tune In', risk: 'App លួចតាមដានសកម្មភាពអ្នក Tune In', rec: 'បិទសិទ្ធិណាដែលមិនចាំបាច់' },
-                { id: 'p5', title: 'Cloud Sync Backup', sub: 'Backup ទិន្នន័យលើ Cloud ជាប្រចាំ Tune In', risk: 'បាត់ទូរស័ព្ទ បាត់រូបភាពរហូត Tune In', rec: 'ប្រើ Google Photos ឬ iCloud' },
-                { id: 'p6', title: 'Find My Device active', sub: 'បើកមុខងារ Find My Device ជានិច្ច Tune In', risk: 'ពេលបាត់ មិនអាចតាមដាន ឬ Erase បាន Tune In', rec: 'បើក Find My iPhone / Google Find' },
-                { id: 'p7', title: 'Cables & Charging safety', sub: 'មិនប្រើដុំសាក ឬខ្សែមិនស្គាល់ប្រភព Tune In', risk: 'ការលួចទិន្នន័យតាមរន្ធ USB Tune In', rec: 'ប្រើគ្រឿងសាកហ្ស៊ីនជានិច្ច' },
-                { id: 'p8', title: 'Bluetooth Off habit', sub: 'បិទ Bluetooth ពេលមិនប្រើប្រាស់ Tune In', risk: 'ជនខិលខូចភ្ជាប់ចូលម៉ាស៊ីនអ្នកបាន Tune In', rec: 'បិទ Bluetooth ពេលដើរនៅក្រៅ' },
-                { id: 'p9', title: 'Wipe Before Discarding', sub: 'Erase All Content មុននឹងលក់ឧបករណ៍ Tune In', urgent: true, risk: 'អ្នកទិញបន្តឃើញរូបថតចាស់ៗរបស់អ្នក Tune In', rec: 'ប្រើមុខងារ Factory Reset ជានិច្ច' },
-                { id: 'p10', title: 'SIM PIN Protection', sub: 'ដាក់លេខកូដសោរលើស៊ីមទូរស័ព្ទ Tune In', risk: 'គេដកស៊ីមអ្នកទៅប្តូរ Pass ធនាគារ Tune In', rec: 'Settings > Mobile Data > SIM PIN' }
+                { id: 'p1', title: 'System Updates policy', sub: 'ធ្វើបច្ចុប្បន្នភាព iOS/Android ជានិច្ច Tune In', urgent: true, risk: 'ចន្លោះប្រហោងចាស់នាំឱ្យ Hacker ចូល Tune In', rec: 'បើក Auto Update ក្នុង settings' },
+                { id: 'p2', title: 'Biometrics Security set', sub: 'ដាក់លេខកូដ និងស្កេនមុខជានិច្ច Tune In', urgent: true, risk: 'នរណាក៏អាចបើកមើលទិន្នន័យអ្នកបាន Tune In', rec: 'ប្រើ Passcode យ៉ាងតិច ៦ ខ្ង់' },
+                { id: 'p3', title: 'App Install Check', sub: 'ដំឡើង App តែពី Store ផ្លូវការប៉ុណ្ណោះ Tune In', risk: 'App ខាងក្រៅមានបង្កប់មេរោគលួចទិន្នន័យ Tune In', rec: 'កុំដំឡើង App តាម Link ក្នុង Telegram' },
+                { id: 'p4', title: 'Permission Review policy', sub: 'ពិនិត្យសិទ្ធិ App (Camera, Mic, Contacts) Tune In', risk: 'App លួចតាមដានសកម្មភាពអ្នក Tune In', rec: 'បិទសិទ្ធិណាដែលមិនចាំបាច់' },
+                { id: 'p5', title: 'Cloud Sync habits', sub: 'Backup ទិន្នន័យលើ Cloud ជាប្រចាំ Tune In', risk: 'បាត់ទូរស័ព្ទ បាត់រូបភាព និងឯកសាររហូត Tune In', rec: 'ប្រើ Google Photos ឬ iCloud' },
+                { id: 'p6', title: 'Find My Device active', sub: 'បើកមុខងារ Find My Device ជានិច្ច Tune In', risk: 'ពេលបាត់ មិនអាចតាមដាន ឬលុបទិន្នន័យ Tune In', rec: 'បើក Find My iPhone / Google Find' },
+                { id: 'p7', title: 'Official Cables usage', sub: 'មិនប្រើដុំសាក ឬខ្សែមិនស្គាល់ប្រភព Tune In', risk: 'អាចមានការលួចទិន្នន័យតាមរន្ធ USB Tune In', rec: 'ប្រើគ្រឿងសាកហ្ស៊ីនជានិច្ច' },
+                { id: 'p8', title: 'Bluetooth Off policy', sub: 'បិទ Bluetooth ពេលមិនប្រើប្រាស់ Tune In', risk: 'ជនខិលខូចភ្ជាប់ចូលម៉ាស៊ីនអ្នកបាន Tune In', rec: 'បិទ Bluetooth ពេលដើរនៅក្រៅ' },
+                { id: 'p9', title: 'Wipe before discarding', sub: 'Erase All Content មុននឹងលក់ឧបករណ៍ Tune In', urgent: true, risk: 'អ្នកទិញបន្តឃើញរូបថតចាស់ៗរបស់អ្នក Tune In', rec: 'ប្រើមុខងារ Factory Reset ជានិច្ច' },
+                { id: 'p10', title: 'SIM PIN Lock policy', sub: 'ដាក់លេខកូដ PIN លើស៊ីមទូរស័ព្ទ Tune In', risk: 'គេដកស៊ីមអ្នកទៅប្តូរ Pass ធនាគារ Tune In', rec: 'Settings > Mobile Data > SIM PIN' }
             ]},
-            // COMPUTER (10)
-            { catId: 'devices', subId: 'pc', group: 'Computer Security', items: [
-                { id: 'pc1', title: 'Antivirus Active status', sub: 'បើក Windows Defender ជានិច្ច Tune In', urgent: true, risk: 'មេរោគលួចឯកសារការងារ និង Password Tune In', rec: 'ធ្វើបច្ចុប្បន្នភាព Antivirus ជានិច្ច' },
-                { id: 'pc2', title: 'Admin Password set', sub: 'ដាក់ Password ខ្លាំងសម្រាប់ចូលម៉ាស៊ីន Tune In', risk: 'នរណាក៏អាចបើកមើលឯកសារអ្នកបាន Tune In', rec: 'ប្រើ Password ឬ PIN ខ្លាំង' },
-                { id: 'pc3', title: 'USB Scan Policy check', sub: 'ស្កេន USB ជានិច្ចមុននឹងបើក Tune In', risk: 'មេរោគឆ្លងចូលម៉ាស៊ីនតាម USB Tune In', rec: 'កុំដោត Flash មិនស្គាល់ប្រភព' },
-                { id: 'pc4', title: 'Clean Extensions list', sub: 'លុប Extension ប្លែកៗចេញពី Chrome Tune In', risk: 'Extension ខ្លះលួចមើល Password ធនាគារ Tune In', rec: 'ប្រើតែ Extension ផ្លូវការ' },
-                { id: 'pc5', title: 'BitLocker Protection', sub: 'ប្រើមុខងារ Encryption ការពារ Hard Drive Tune In', risk: 'បើបាត់ម៉ាស៊ីន គេអាចដក Hard Drive ទៅអាន Tune In', rec: 'បើក BitLocker ក្នុង settings' },
+            // PC (10 UNIQUE)
+            { catId: 'devices', subId: 'pc', group: 'PC/Laptop Security', items: [
+                { id: 'pc1', title: 'Windows Defender set', sub: 'បើក Windows Defender ជានិច្ច Tune In', urgent: true, risk: 'មេរោគលួចឯកសារការងារ និង Password Tune In', rec: 'ធ្វើបច្ចុប្បន្នភាព Antivirus ជានិច្ច' },
+                { id: 'pc2', title: 'System Password set', sub: 'ដាក់ Password ខ្លាំងសម្រាប់ចូលម៉ាស៊ីន Tune In', risk: 'នរណាក៏អាចបើកមើលឯកសារអ្នកបាន Tune In', rec: 'ប្រើ Password ឬ PIN ខ្លាំង' },
+                { id: 'pc3', title: 'USB Scan rules set', sub: 'ស្កេន USB ជានិច្ចមុននឹងបើក Tune In', risk: 'មេរោគឆ្លងចូលម៉ាស៊ីនតាម USB Tune In', rec: 'កុំដោត Flash មិនស្គាល់ប្រភព' },
+                { id: 'pc4', title: 'Clean Extension list', sub: 'លុប Extension ប្លែកៗចេញពី Chrome Tune In', risk: 'Extension ខ្លះលួចមើល Password ធនាគារ Tune In', rec: 'ប្រើតែ Extension ផ្លូវការ' },
+                { id: 'pc5', title: 'Drive Encryption act', sub: 'ប្រើ BitLocker ការពារឯកសារក្នុង Hard Drive Tune In', risk: 'បើបាត់ម៉ាស៊ីន គេអាចដក Hard Drive ទៅអាន Tune In', rec: 'បើក BitLocker ក្នុង settings' },
                 { id: 'pc6', title: 'Firewall Enabled always', sub: 'បើក Firewall ការពារការលុកលុយ Network Tune In', risk: 'Hacker ចូលម៉ាស៊ីនតាមរយៈ WiFi Tune In', rec: 'Settings > Network > Firewall' },
-                { id: 'pc7', title: 'No Crack software', sub: 'មិនប្រើកម្មវិធី Crack ដែលគ្មានអាជ្ញាប័ណ្ណ Tune In', urgent: true, risk: 'កម្មវិធី Crack ភាគច្រើនមានមេរោគ Tune In', rec: 'ប្រើកម្មវិធីស្របច្បាប់ជានិច្ច' },
-                { id: 'pc8', title: 'No Pass on Desktop', sub: 'មិនទុកឯកសារ Password លើ Desktop Tune In', risk: 'អ្នកអង្គុយក្បែរមើលឃើញ Password Tune In', rec: 'ប្រើ Password Manager ជំនួសវិញ' },
-                { id: 'pc9', title: 'Webcam Cover policy', sub: 'បិទកាមេរ៉ាកុំព្យូទ័រពេលឈប់ប្រើ Tune In', risk: 'Hacker លួចមើលសកម្មភាពអ្នកតាមមេរោគ Tune In', rec: 'ប្រើស្កុតបិទ ឬ Webcam Cover' },
-                { id: 'pc10', title: 'OS PC commitment', sub: 'ធ្វើបច្ចុប្បន្នភាព Windows/Mac ជានិច្ច Tune In', urgent: true, risk: 'ចន្លោះប្រហោងចាស់នាំឱ្យ Hacker ចូល Tune In', rec: 'បើកមុខងារ Auto-update' }
+                { id: 'pc7', title: 'Official Software only', sub: 'មិនប្រើកម្មវិធី Crack ដែលគ្មានអាជ្ញាប័ណ្ណ Tune In', urgent: true, risk: 'កម្មវិធី Crack ភាគច្រើនមានមេរោគ Tune In', rec: 'ប្រើកម្មវិធីស្របច្បាប់ជានិច្ច' },
+                { id: 'pc8', title: 'No Passwords on Desktop', sub: 'មិនទុកឯកសារ Password លើ Desktop Tune In', risk: 'អ្នកអង្គុយក្បែរមើលឃើញ Password Tune In', rec: 'ប្រើ Password Manager ជំនួសវិញ' },
+                { id: 'pc9', title: 'Webcam Physical Guard', sub: 'បិទកាមេរ៉ាកុំព្យូទ័រពេលឈប់ប្រើ Tune In', risk: 'Hacker អាចលួចមើលសកម្មភាពអ្នក Tune In', rec: 'ប្រើស្កុតបិទ ឬ Webcam Cover' },
+                { id: 'pc10', title: 'OS PC commitment set', sub: 'ធ្វើបច្ចុប្បន្នភាព Windows/Mac ជានិច្ច Tune In', urgent: true, risk: 'ចន្លោះប្រហោងចាស់នាំឱ្យ Hacker ចូល Tune In', rec: 'បើកមុខងារ Auto-update' }
             ]},
-            // SHARED DEVICES (10)
+            // SHARED (10 UNIQUE)
             { catId: 'devices', subId: 'shared', group: 'Shared Device Safety', items: [
-                { id: 'sh1', title: 'Guest Profile usage', sub: 'ប្រើ Guest Account ពេលឱ្យអ្នកដទៃខ្ចី Tune In', risk: 'គេឃើញរូបភាព និងឆាតឯកជនរបស់អ្នក Tune In', rec: 'បង្កើត User Account ផ្សេងសម្រាប់ភ្ញៀវ' },
-                { id: 'sh2', title: 'Strict Public Signout', sub: 'Logout ជានិច្ចពេលប្រើម៉ាស៊ីនសាធារណៈ Tune In', urgent: true, risk: 'អ្នកប្រើក្រោយអាចចូល Account អ្នកបាន Tune In', rec: 'កុំគ្រាន់តែបិទ Tab ត្រូវ Sign out ជានិច្ច' },
-                { id: 'sh3', title: 'Incognito use habit', sub: 'ប្រើ Incognito ពេលប្រើកុំព្យូទ័រអ្នកដទៃ Tune In', risk: 'Browser ចងចាំ Password និង History អ្នក Tune In', rec: 'ប្រើ Ctrl+Shift+N លើ Chrome' },
+                { id: 'sh1', title: 'Guest Profile use', sub: 'ប្រើ Guest Account ពេលឱ្យអ្នកដទៃខ្ចី Tune In', risk: 'គេឃើញរូបភាព និងឆាតឯកជនរបស់អ្នក Tune In', rec: 'បង្កើត User Account ផ្សេងសម្រាប់ភ្ញៀវ' },
+                { id: 'sh2', title: 'Strict Public Logout', sub: 'Logout ជានិច្ចពេលប្រើម៉ាស៊ីនសាធារណៈ Tune In', urgent: true, risk: 'អ្នកប្រើក្រោយអាចចូល Account អ្នកបាន Tune In', rec: 'កុំគ្រាន់តែបិទ Tab ត្រូវ Sign out ជានិច្ច' },
+                { id: 'sh3', title: 'Incognito Use habit', sub: 'ប្រើ Incognito ពេលប្រើកុំព្យូទ័រអ្នកដទៃ Tune In', risk: 'Browser ចងចាំ Password និង History អ្នក Tune In', rec: 'ប្រើ Ctrl+Shift+N លើ Chrome' },
                 { id: 'sh4', title: 'History Clear habit', sub: 'លុប History ក្រោយប្រើកុំព្យូទ័រគេរួច Tune In', risk: 'អ្នកដទៃដឹងថាអ្នក Search អ្វីខ្លះ Tune In', rec: 'Clear browsing data ក្នុង settings' },
                 { id: 'sh5', title: 'Temporary File removal', sub: 'លុបឯកសារដែលអ្នកបាន Download លើម៉ាស៊ីនគេ Tune In', risk: 'ទិន្នន័យអ្នកនៅសល់លើម៉ាស៊ីនគេរហូត Tune In', rec: 'Empty trash មុននឹងដើរចេញ' },
-                { id: 'sh6', title: 'No Public USB port', sub: 'មិនដោត Flash ខ្លួនឯងលើម៉ាស៊ីនសាធារណៈ Tune In', risk: 'មេរោគឆ្លងចូល Flash លួចទិន្នន័យអ្នក Tune In', rec: 'ប្រើ Cloud storage ជំនួសវិញ' },
-                { id: 'sh7', title: 'Autofill Security Off', sub: 'មិនឱ្យ Browser ចងចាំ Password លើម៉ាស៊ីនគេ Tune In', urgent: true, risk: 'គេអាចចូល Account អ្នកបានយ៉ាងងាយ Tune In', rec: 'ជ្រើសរើស "Never for this site"' },
-                { id: 'sh8', title: 'Wipe Before Discard', sub: 'Erase All Content មុននឹងលក់ឧបករណ៍ Tune In', urgent: true, risk: 'អ្នកទិញបន្តឃើញរូបថតចាស់ៗរបស់អ្នក Tune In', rec: 'ប្រើមុខងារ Factory Reset ជានិច្ច' },
-                { id: 'sh9', title: 'Shared Passcode Audit', sub: 'ប្តូរ Password សោរអេក្រង់បើចែកគ្នាប្រើ Tune In', risk: 'មានអ្នកលួចមើលទិន្នន័យពីក្រោយខ្នង Tune In', rec: 'ប្រើ PIN វែងៗ កុំឱ្យគេងាយលួចមើល' },
-                { id: 'sh10', title: 'Repair Shop Guard', sub: 'Logout គ្រប់ App មុនឱ្យជាងជួសជុល Tune In', risk: 'ជាងអាចលួចមើលឆាត ឬរូបភាពសម្ងាត់ Tune In', rec: 'ដកស៊ីម និង Logout Account ឱ្យអស់' }
+                { id: 'sh6', title: 'No Public USB usage', sub: 'មិនដោត Flash ខ្លួនឯងលើម៉ាស៊ីនសាធារណៈ Tune In', risk: 'មេរោគឆ្លងចូល Flash លួចទិន្នន័យអ្នក Tune In', rec: 'ប្រើ Cloud storage ជំនួសវិញ' },
+                { id: 'sh7', title: 'Autofill Security Off', sub: 'បិទការចងចាំ Password ក្នុង Shared Browser Tune In', urgent: true, risk: 'គេអាចចូល Account អ្នកបានយ៉ាងងាយ Tune In', rec: 'ជ្រើសរើស "Never for this site"' },
+                { id: 'sh8', title: 'Wipe Before Discard rule', sub: 'Erase All Content មុននឹងលក់ឧបករណ៍ Tune In', urgent: true, risk: 'អ្នកទិញបន្តឃើញរូបថតចាស់ៗរបស់អ្នក Tune In', rec: 'ប្រើមុខងារ Factory Reset ជានិច្ច' },
+                { id: 'sh9', title: 'PIN Code Rotation habit', sub: 'ប្តូរ Password សោរអេក្រង់បើចែកគ្នាប្រើ Tune In', risk: 'មានអ្នកលួចមើលទិន្នន័យពីក្រោយខ្នង Tune In', rec: 'ប្រើ PIN វែងៗ កុំឱ្យគេងាយលួចមើល' },
+                { id: 'sh10', title: 'Repair Shop Guard rule', sub: 'Logout គ្រប់ App មុនឱ្យជាងជួសជុល Tune In', risk: 'ជាងអាចលួចមើលឆាត ឬរូបភាពសម្ងាត់ Tune In', rec: 'ដកស៊ីម និង Logout Account ឱ្យអស់' }
             ]},
-            // KIDS (10)
+            // KIDS (10 UNIQUE)
             { catId: 'family', subId: 'child', group: 'Children Safety', items: [
-                { id: 'fc1', title: 'Family Monitoring', sub: 'ដឹងថាកូនលេង App ឬ Game អ្វីខ្លះ Tune In', urgent: true, risk: 'កូនប៉ះពាល់ Content ហិង្សា ឬអាសអាភាស Tune In', rec: 'ប្រើ Google Family Link' },
-                { id: 'fc2', title: 'Screen Time limitation', sub: 'កំណត់ម៉ោងប្រើប្រាស់ឱ្យសមស្រប Tune In', risk: 'ប៉ះពាល់ភ្នែក និងការលូតលាស់ខួរក្បាល Tune In', rec: 'កំណត់ឱ្យប្រើត្រឹម ១-២ ម៉ោងក្នុងមួយថ្ងៃ' },
-                { id: 'fc3', title: 'Stranger Alert Habit', sub: 'អប់រកូនកុំឱ្យតបឆាតជាមួយជនចម្លែក Tune In', urgent: true, risk: 'ជនខិលខូចលួងលោមក្មេងក្នុងផ្លូវមិនល្អ Tune In', rec: 'ប្រាប់កូនឱ្យហ៊ានប្រាប់អ្នករាល់ពេលមានរឿង' },
+                { id: 'fc1', title: 'Google Family Link set', sub: 'ដំឡើង App គ្រប់គ្រងលើទូរស័ព្ទកូន Tune In', urgent: true, risk: 'កូនប៉ះពាល់ Content ហិង្សា ឬអាសអាភាស Tune In', rec: 'ប្រើ Google Family Link' },
+                { id: 'fc2', title: 'Time limitation habit', sub: 'កំណត់ម៉ោងប្រើប្រាស់ឱ្យសមស្រប Tune In', risk: 'ប៉ះពាល់ភ្នែក និងការលូតលាស់ខួរក្បាល Tune In', rec: 'កំណត់ឱ្យប្រើត្រឹម ១-២ ម៉ោងក្នុងមួយថ្ងៃ' },
+                { id: 'fc3', title: 'Stranger Alert lesson', sub: 'អប់រកូនកុំឱ្យតបឆាតជាមួយជនចម្លែក Tune In', urgent: true, risk: 'ជនខិលខូចលួងលោមក្មេងក្នុងផ្លូវមិនល្អ Tune In', rec: 'ប្រាប់កូនឱ្យហ៊ានប្រាប់អ្នករាល់ពេលមានរឿង' },
                 { id: 'fc4', title: 'Purchase Lock set', sub: 'បិទមុខងារទិញឥវ៉ាន់ក្នុង Game សម្រាប់ក្មេង Tune In', risk: 'កូនច្រឡំទិញរបស់អស់លុយរាប់ពាន់ដុល្លារ Tune In', rec: 'ដាក់ Password សម្រាប់ការទិញក្នុង Store' },
                 { id: 'fc5', title: 'Child Privacy Policy', sub: 'កំណត់ Account TikTok/FB កូនឱ្យ Private Tune In', risk: 'ជនចម្លែកអាចដឹងព័ត៌មានកូន និងតាមដាន Tune In', rec: 'កំណត់ឱ្យឃើញត្រឹម Friends/Contacts' },
-                { id: 'fc6', title: 'No ID sharing lesson', sub: 'បង្រៀនកូនកុំឱ្យឱ្យលេខ OTP ឬ ID ទៅគេ Tune In', risk: 'ជនបោកប្រាស់បោកក្មេងដើម្បីលួច Account Tune In', rec: 'ប្រាប់កូនថាគ្មានអ្វី Free ក្នុងលោកឡើយ' },
-                { id: 'fc7', title: 'Location Off kids set', sub: 'បិទការចែករំលែកទីតាំងក្នុងឧបករណ៍កូន Tune In', risk: 'ជនមិនល្អដឹងពីកន្លែងដែលកូនអ្នកនៅ Tune In', rec: 'បិទ Share My Location ក្នុង Settings' },
+                { id: 'fc6', title: 'No ID sharing education', sub: 'បង្រៀនកូនកុំឱ្យឱ្យលេខ OTP ឬ ID ទៅគេ Tune In', risk: 'ជនបោកប្រាស់បោកក្មេងដើម្បីលួច Account Tune In', rec: 'ប្រាប់កូនថាគ្មានអ្វី Free ក្នុងលោកឡើយ' },
+                { id: 'fc7', title: 'Location Off kids rule', sub: 'បិទការចែករំលែកទីតាំងក្នុងឧបករណ៍កូន Tune In', risk: 'ជនមិនល្អដឹងពីកន្លែងដែលកូនអ្នកនៅ Tune In', rec: 'បិទ Share My Location ក្នុង Settings' },
                 { id: 'fc8', title: 'Install Guard set', sub: 'ដាក់ Password មុនដំឡើង App ថ្មីៗ Tune In', risk: 'កូនដំឡើង App មិនល្អ ឬ App លួចទិន្នន័យ Tune In', rec: 'Settings > Store > Require Password' },
-                { id: 'fc9', title: 'Bullying Alert policy', sub: 'បង្រៀនកូនឱ្យដឹងពីរបៀប Report ការសម្លុត Tune In', risk: 'ប៉ះពាល់ផ្លូវចិត្តកូនធ្ងន់ធ្ងរ Tune In', rec: 'ពិភាក្សានិយាយលេងជាមួយកូនរាល់ថ្ងៃ' },
-                { id: 'fc10', title: 'YouTube Kids filter', sub: 'បើកមុខងារ Restricted Mode លើ YouTube Tune In', risk: 'កូនឃើញ Content មិនល្អដោយអចេតនា Tune In', rec: 'ប្រើ YouTube Kids ឱ្យកូនលេង' }
+                { id: 'fc9', title: 'Bullying Monitoring steps', sub: 'បង្រៀនកូនឱ្យដឹងពីរបៀប Report ការសម្លុត Tune In', risk: 'ប៉ះពាល់ផ្លូវចិត្តកូនធ្ងន់ធ្ងរ Tune In', rec: 'ពិភាក្សានិយាយលេងជាមួយកូនរាល់ថ្ងៃ' },
+                { id: 'fc10', title: 'YouTube Kids filter set', sub: 'បើកមុខងារ Restricted Mode លើ YouTube Tune In', risk: 'កូនឃើញ Content មិនល្អដោយអចេតនា Tune In', rec: 'ប្រើ YouTube Kids ឱ្យកូនលេង' }
             ]},
-            // ELDERLY (10)
-            { catId: 'family', subId: 'elder', group: 'Elderly Support', items: [
-                { id: 'fe1', title: 'Scam Call Shield set', sub: 'ពន្យល់គាត់កុំឱ្យជឿអ្នកតេមកទារលុយ Tune In', urgent: true, risk: 'ចាញ់បោកការគំរាមកំហែងតាមទូរស័ព្ទ Tune In', rec: 'ប្រាប់គាត់ឱ្យតេមកអ្នកភ្លាមបើមានគេតេមក' },
-                { id: 'fe2', title: 'Link Avoidance habit', sub: 'ប្រាប់គាត់កុំឱ្យចុចតាម Link ក្នុង SMS Tune In', urgent: true, risk: 'Link បោកយក Password ធនាគាររបស់គាត់ Tune In', rec: 'លុប SMS មិនស្គាល់ចោលឱ្យគាត់ជានិច្ច' },
-                { id: 'fe3', title: 'Biometrics for them', sub: 'ដាក់សោរស្កេនម្រាមដៃលើ App ធនាគារគាត់ Tune In', risk: 'គាត់អាចច្រឡំចុចផ្ទេរលុយ ឬគេលួចមើល PIN Tune In', rec: 'ប្រើ Biometrics ងាយស្រួល និងសុវត្ថិភាព' },
-                { id: 'fe4', title: 'Simplified Password notebook', sub: 'ប្រើ Passcode ងាយស្រួលចាំ តែសុវត្ថិភាព Tune In', risk: 'គាត់ឧស្សាហ៍ភ្លេច Password នាំឱ្យបាត់ Account Tune In', rec: 'កត់ Password គាត់ទុកកន្លែងសម្ងាត់ក្នុងផ្ទះ' },
-                { id: 'fe5', title: 'Privacy Settings for Elders', sub: 'កំណត់ Privacy ឱ្យគាត់ឱ្យបានហ្មត់ចត់ Tune In', risk: 'ជនបោកប្រាស់ Add គាត់ចូលគ្រុបបោកប្រាស់ Tune In', rec: 'ដាក់ Settings ឱ្យឃើញតែ Friends ជានិច្ច' },
-                { id: 'fe6', title: 'Remote Help tool set', sub: 'ដំឡើង App ឱ្យអ្នកអាចជួយគាត់ពីចម្ងាយ Tune In', risk: 'គាត់ជួបបញ្ហា តែអ្នកមើលមិនឃើញ Tune In', rec: 'ប្រើ Google Family ឬ AnyDesk' },
-                { id: 'fe7', title: 'FB Ad Awareness policy', sub: 'បង្រៀនគាត់កុំឱ្យចុចតាម Ad ក្នុង Facebook Tune In', risk: 'គាត់អាចទិញរបស់ក្លែងក្លាយតាមការបោក Tune In', rec: 'ប្រាប់គាត់ឱ្យសួរអ្នកមុននឹងទិញអ្វីមួយ' },
-                { id: 'fe8', title: 'OTP Lesson Set', sub: 'ប្រាប់គាត់ឱ្យដឹងថា OTP គឺសម្ងាត់បំផុត Tune In', urgent: true, risk: 'គាត់ងាយនឹងប្រាប់គេតាមទូរស័ព្ទ Tune In', rec: 'បញ្ជាក់ថាធនាគារមិនដែលសុំលេខនេះទេ' },
-                { id: 'fe9', title: 'No Scratch Card policy', sub: 'ប្រាប់គាត់កុំឱ្យទិញកាតកោសឱ្យអ្នកដទៃ Tune In', risk: 'បាត់បង់លុយកាក់តាមរយៈការបោកបញ្ឆោត Tune In', rec: 'ពន្យល់គាត់ថាគ្មានអាជ្ញាធរណាសុំកាតទេ' },
-                { id: 'fe10', title: 'Quick Speed Dial set', sub: 'ដាក់រូបភាពអ្នកលើ Contact ឱ្យគាត់ងាយរក Tune In', risk: 'គាត់រកលេខអ្នកមិនឃើញពេលមានអាសន្ន Tune In', rec: 'ប្រើ Widget Contact លើ Home Screen គាត់' }
-            ]},
-            // PARENTS (10)
-            { catId: 'family', subId: 'parent', group: 'Parental Responsibility', items: [
-                { id: 'fp1', title: 'Lead by Example habit', sub: 'ធ្វើជាគំរូដល់កូនក្នុងការប្រើបច្ចេកវិទ្យា Tune In', risk: 'កូននឹងធ្វើតាមទម្លាប់មិនល្អរបស់អ្នក Tune In', rec: 'កុំប្រើទូរស័ព្ទពេលញ៉ាំបាយជាមួយកូន' },
-                { id: 'fp2', title: 'Passcode Secrecy set', sub: 'មិនឱ្យកូនស្គាល់ Password ធនាគារ Tune In', urgent: true, risk: 'កូនច្រឡំផ្ទេរលុយ ឬលុបទិន្នន័យការងារ Tune In', rec: 'ប្រើ Passcode ផ្សេងគ្នាសម្រាប់កូន' },
-                { id: 'fp3', title: 'No Sharenting policy', sub: 'មិនបង្ហោះរូបកូនសាធារណៈរាល់ថ្ងៃ Tune In', risk: 'រូបភាពកូនត្រូវយកទៅប្រើក្នុងផ្លូវមិនល្អ Tune In', rec: 'កំណត់ Post ឱ្យឃើញតែសាច់ញាតិ' },
-                { id: 'fp4', title: 'Independent accounts set', sub: 'មិនប្រើ Account FB រួមគ្នាជាមួយកូន Tune In', risk: 'កូនឃើញ Content មនុស្សធំ និងឆាតឯកជន Tune In', rec: 'បង្កើត Account ដាច់ដោយឡែកសម្រាប់កូន' },
+            // PARENTS (10 UNIQUE)
+            { catId: 'family', subId: 'parent', group: 'Parental Digital Health', items: [
+                { id: 'fp1', title: 'Digital Lead Example', sub: 'ធ្វើជាគំរូដល់កូនក្នុងការប្រើបច្ចេកវិទ្យា Tune In', risk: 'កូននឹងធ្វើតាមទម្លាប់មិនល្អរបស់អ្នក Tune In', rec: 'កុំប្រើទូរស័ព្ទពេលញ៉ាំបាយជាមួយកូន' },
+                { id: 'fp2', title: 'Separate Password Policy', sub: 'មិនឱ្យកូនស្គាល់ Password ធនាគារ Tune In', urgent: true, risk: 'កូនច្រឡំផ្ទេរលុយ ឬលុបទិន្នន័យការងារ Tune In', rec: 'ប្រើ Passcode ផ្សេងគ្នាសម្រាប់កូន' },
+                { id: 'fp3', title: 'No Sharenting habit', sub: 'មិនបង្ហោះរូបកូនសាធារណៈរាល់ថ្ងៃ Tune In', risk: 'រូបភាពកូនត្រូវយកទៅប្រើក្នុងផ្លូវមិនល្អ Tune In', rec: 'កំណត់ Post ឱ្យឃើញតែសាច់ញាតិ' },
+                { id: 'fp4', title: 'Separate Accounts Set', sub: 'មិនប្រើ Account FB រួមគ្នាជាមួយកូន Tune In', risk: 'កូនឃើញ Content មនុស្សធំ និងឆាតឯកជន Tune In', rec: 'បង្កើត Account ដាច់ដោយឡែកសម្រាប់កូន' },
                 { id: 'fp5', title: 'New App Audit rules', sub: 'ឆែកមើល App ដែលកូនទើបតែដំឡើង Tune In', risk: 'App ខ្លះលួចទិន្នន័យ និងតាមដានកូនអ្នក Tune In', rec: 'ពិនិត្យក្នុង Settings > Apps ជានិច្ច' },
                 { id: 'fp6', title: 'Trust Communication skill', sub: 'បង្កើតទំនុកចិត្តឱ្យកូនហ៊ានប្រាប់រឿង Online Tune In', risk: 'កូនជួបបញ្ហាតែម្នាក់ឯង នាំឱ្យរឿងកាន់តែធំ Tune In', rec: 'ចំណាយពេលស្តាប់កូនឱ្យបានច្រើន' },
                 { id: 'fp7', title: 'Free Link Education set', sub: 'ប្រាប់កូនកុំឱ្យចុចតាម Link ផ្តល់របស់ Free Tune In', risk: 'Hacker ចូលគ្រប់គ្រងទូរស័ព្ទតាមរយៈកូនអ្នក Tune In', rec: 'ប្រាប់កូនថាគ្មានរបស់ Free លើលោកឡើយ' },
-                { id: 'fp8', title: 'Regular Inspection habit', sub: 'ពិនិត្យទូរស័ព្ទកូនឱ្យបានរាល់សប្តាហ៍ Tune In', risk: 'កូនលួចលេងគ្រុបសម្ងាត់ដែលគ្រោះថ្នាក់ Tune In', rec: 'ធ្វើរឿងនេះដោយការយោគយល់គ្នា' },
-                { id: 'fp9', title: 'Friend Review habit', sub: 'ឆែកមើលបញ្ជី Friend របស់កូនក្នុង App Tune In', risk: 'ជនចម្លែកបន្លំខ្លួនមកលួងលោមកូនអ្នក Tune In', rec: 'ឱ្យកូន Accept តែអ្នកដែលស្គាល់ផ្ទាល់' },
-                { id: 'fp10', title: 'Staying Tech Informed set', sub: 'រៀនពីបច្ចេកវិទ្យាឱ្យទាន់កូន Tune In', risk: 'កូនប្រើ App ដែលអ្នកមិនស្គាល់ ហើយគ្រោះថ្នាក់ Tune In', rec: 'រៀនប្រើ TikTok/Telegram ឱ្យបានខ្លះ' }
+                { id: 'fp8', title: 'Device Inspection rule', sub: 'ពិនិត្យទូរស័ព្ទកូនឱ្យបានរាល់សប្តាហ៍ Tune In', risk: 'កូនលួចលេងគ្រុបសម្ងាត់ដែលគ្រោះថ្នាក់ Tune In', rec: 'ធ្វើរឿងនេះដោយការយោគយល់គ្នា' },
+                { id: 'fp9', title: 'Review Friend list set', sub: 'ឆែកមើលបញ្ជី Friend របស់កូនក្នុង App Tune In', risk: 'ជនចម្លែកបន្លំខ្លួនមកលួងលោមកូនអ្នក Tune In', rec: 'ឱ្យកូន Accept តែអ្នកដែលស្គាល់ផ្ទាល់' },
+                { id: 'fp10', title: 'Tech Informed habit', sub: 'រៀនពីបច្ចេកវិទ្យាឱ្យទាន់កូន Tune In', risk: 'កូនប្រើ App ដែលអ្នកមិនស្គាល់ ហើយគ្រោះថ្នាក់ Tune In', rec: 'រៀនប្រើ TikTok/Telegram ឱ្យបានខ្លះ' }
             ]},
-            // WORK - Meetings (10)
+            // ELDERLY (10 UNIQUE)
+            { catId: 'family', subId: 'elder', group: 'Elderly Support', items: [
+                { id: 'fe1', title: 'Scam Call Shield set', sub: 'ពន្យល់គាត់កុំឱ្យជឿអ្នកតេមកទារលុយ Tune In', urgent: true, risk: 'ចាញ់បោកការគំរាមកំហែងតាមទូរស័ព្ទ Tune In', rec: 'ប្រាប់គាត់ឱ្យតេមកអ្នកភ្លាមបើមានគេតេមក' },
+                { id: 'fe2', title: 'Fake SMS Caution habit', sub: 'ប្រាប់គាត់កុំឱ្យចុចតាម Link ក្នុង SMS Tune In', urgent: true, risk: 'Link បោកយក Password ធនាគាររបស់គាត់ Tune In', rec: 'លុប SMS មិនស្គាល់ចោលឱ្យគាត់ជានិច្ច' },
+                { id: 'fe3', title: 'Biometrics for them set', sub: 'ដាក់សោរស្កេនម្រាមដៃលើ App ធនាគារគាត់ Tune In', risk: 'គាត់អាចច្រឡំចុចផ្ទេរលុយ ឬគេលួចមើល PIN Tune In', rec: 'ប្រើ Biometrics ងាយស្រួល និងសុវត្ថិភាព' },
+                { id: 'fe4', title: 'Simplified Password list', sub: 'ប្រើ Passcode ងាយស្រួលចាំ តែសុវត្ថិភាព Tune In', risk: 'គាត់ឧស្សាហ៍ភ្លេច Password នាំឱ្យបាត់ Account Tune In', rec: 'កត់ Password គាត់ទុកកន្លែងសម្ងាត់ក្នុងផ្ទះ' },
+                { id: 'fe5', title: 'Privacy Lockdown set', sub: 'កំណត់ Privacy ឱ្យគាត់ឱ្យបានហ្មត់ចត់ Tune In', risk: 'ជនបោកប្រាស់ Add គាត់ចូលគ្រុបបោកប្រាស់ Tune In', rec: 'ដាក់ Settings ឱ្យឃើញតែ Friends ជានិច្ច' },
+                { id: 'fe6', title: 'Remote Support tool set', sub: 'ដំឡើង App ឱ្យអ្នកអាចជួយគាត់ពីចម្ងាយ Tune In', risk: 'គាត់ជួបបញ្ហា តែអ្នកមើលមិនឃើញ Tune In', rec: 'ប្រើ Google Family ឬ AnyDesk/Teamviewer' },
+                { id: 'fe7', title: 'Facebook Ad Scam awareness', sub: 'បង្រៀនគាត់កុំឱ្យចុចតាម Ad ក្នុង Facebook Tune In', risk: 'គាត់អាចទិញរបស់ក្លែងក្លាយតាមការបោក Tune In', rec: 'ប្រាប់គាត់ឱ្យសួរអ្នកមុននឹងទិញអ្វីមួយ' },
+                { id: 'fe8', title: 'OTP Privacy lesson set', sub: 'ប្រាប់គាត់ឱ្យដឹងថា OTP គឺសម្ងាត់បំផុត Tune In', urgent: true, risk: 'គាត់ងាយនឹងប្រាប់គេតាមទូរស័ព្ទ Tune In', rec: 'បញ្ជាក់ថាធនាគារមិនដែលសុំលេខនេះទេ' },
+                { id: 'fe9', title: 'No Scratch Card payments', sub: 'ប្រាប់គាត់កុំឱ្យទិញកាតកោសឱ្យអ្នកដទៃ Tune In', risk: 'បាត់បង់លុយកាក់តាមរយៈការបោកបញ្ឆោត Tune In', rec: 'ពន្យល់គាត់ថាគ្មានអាជ្ញាធរណាសុំកាតទេ' },
+                { id: 'fe10', title: 'Emergency Speed dial set', sub: 'ដាក់រូបភាពអ្នកលើ Contact ឱ្យគាត់ងាយរក Tune In', risk: 'គាត់រកលេខអ្នកមិនឃើញពេលមានអាសន្ន Tune In', rec: 'ប្រើ Widget Contact លើ Home Screen គាត់' }
+            ]},
+            // WORK (30 UNIQUE)
             { catId: 'work', subId: 'wk_meet', group: 'Online Meetings', items: [
-                { id: 'wm1', title: 'Passcode Enabled set', sub: 'ដាក់លេខកូដសម្ងាត់សម្រាប់ការប្រជុំជានិច្ច Tune In', urgent: true, risk: 'ជនមិនស្គាល់ចូលមកលួចស្តាប់ ឬរំខាន Tune In', rec: 'ប្រើ Passcode ក្នុង Zoom/Meet settings' },
-                { id: 'wm2', title: 'Waiting Room policy', sub: 'ប្រើ Waiting Room ដើម្បី Verify អ្នកចូល Tune In', risk: 'Hacker ចូលមកចែកចាយ Content មិនល្អ Tune In', rec: 'Approve តែអ្នកដែលអ្នកស្គាល់ច្បាស់' },
+                { id: 'wm1', title: 'Meeting Passcode Enabled', sub: 'ដាក់លេខកូដសម្ងាត់សម្រាប់ការប្រជុំជានិច្ច Tune In', urgent: true, risk: 'ជនមិនស្គាល់ចូលមកលួចស្តាប់ ឬរំខាន Tune In', rec: 'ប្រើ Passcode ក្នុង Zoom/Meet settings' },
+                { id: 'wm2', title: 'Waiting Room policy act', sub: 'ប្រើ Waiting Room ដើម្បី Verify អ្នកចូល Tune In', risk: 'Hacker ចូលមកចែកចាយ Content មិនល្អ Tune In', rec: 'Approve តែអ្នកដែលអ្នកស្គាល់ច្បាស់' },
                 { id: 'wm3', title: 'Screen Share Lock set', sub: 'បិទការ Share Screen សម្រាប់អ្នកចូលរួម Tune In', risk: 'ជនមិនល្អអាច Share រឿងមិនល្អរំខាន Tune In', rec: 'បើកសិទ្ធិឱ្យតែ Host ប៉ុណ្ណោះ' },
-                { id: 'wm4', title: 'No Public Links usage', sub: 'មិន Share Link ប្រជុំជាសាធារណៈលើ FB Tune In', urgent: true, risk: 'នរណាក៏អាចចូលមកបាន ដែលនាំឱ្យមានរឿង Tune In', rec: 'ផ្ញើ Link តែក្នុងគ្រុបការងារផ្លូវការ' },
-                { id: 'wm5', title: 'Consent Policy for record', sub: 'សុំការអនុញ្ញាតមុននឹងថតការប្រជុំ Tune In', risk: 'ប៉ះពាល់សិទ្ធិឯកជន និងព័ត៌មានសម្ងាត់ Tune In', rec: 'ប្រកាសប្រាប់អ្នកចូលរួមមុនចុច Record' },
-                { id: 'wm6', title: 'Privacy Background blur', sub: 'ប្រើ Background Blur ឬ Virtual Background Tune In', risk: 'គេដឹងពីទីតាំងផ្ទះ ឬព័ត៌មាន حساس ក្នុងផ្ទះ Tune In', rec: 'ឆែកមើលផ្ទៃខាងក្រោយមុនបើក Camera' },
-                { id: 'wm7', title: 'Host Management tools', sub: 'ចេះប្រើប៊ូតុងបណ្តេញចេញពេលមានបញ្ហា Tune In', risk: 'ជនបង្កបញ្ហារំខានដល់ការប្រជុំទាំងមូល Tune In', rec: 'រៀនប្រើ Host controls ឱ្យបានស្ទាត់' },
-                { id: 'wm8', title: 'Encrypted Meetings only', sub: 'ប្រើ App ដែលមាន End-to-end encryption Tune In', risk: 'Hacker អាចលួចស្តាប់ការសន្ទនាតាមប្រព័ន្ធ Tune In', rec: 'ប្រើ Zoom, Teams, ឬ Google Meet ផ្លូវការ' },
-                { id: 'wm9', title: 'Audio/Video off policy', sub: 'បិទ Mic និង Camera ជានិច្ចពេលចប់ប្រជុំ Tune In', risk: 'គេលួចមើលសកម្មភាពក្រោយពេលប្រជុំ Tune In', rec: 'ប្រាកដថាបានចាកចេញពី Room ទាំងស្រុង' },
-                { id: 'wm10', title: 'No Unknown Chat Files', sub: 'មិនដំឡើង File ដែលផ្ញើមកក្នុង Meeting Chat Tune In', risk: 'File មេរោគដែល Hacker បញ្ជូនមក Tune In', rec: 'ផ្ញើឯកសារតាមរយៈ Email ការងារវិញ' }
+                { id: 'wm4', title: 'No Public Link sharing', sub: 'មិន Share Link ប្រជុំជាសាធារណៈលើ FB Tune In', urgent: true, risk: 'នរណាក៏អាចចូលមកបាន ដែលនាំឱ្យមានរឿង Tune In', rec: 'ផ្ញើ Link តែក្នុងគ្រុបការងារផ្លូវការ' },
+                { id: 'wm5', title: 'Recording Consent habit', sub: 'សុំការអនុញ្ញាតមុននឹងថតការប្រជុំ Tune In', risk: 'ប៉ះពាល់សិទ្ធិឯកជន និងព័ត៌មានសម្ងាត់ Tune In', rec: 'ប្រកាសប្រាប់អ្នកចូលរួមមុនចុច Record' },
+                { id: 'wm6', title: 'Privacy Background active', sub: 'ប្រើ Background Blur ឬ Virtual Background Tune In', risk: 'គេដឹងពីទីតាំងផ្ទះ ឬព័ត៌មាន حساس ក្នុងផ្ទះ Tune In', rec: 'ឆែកមើលផ្ទៃខាងក្រោយមុនបើក Camera' },
+                { id: 'wm7', title: 'Host Control toolset set', sub: 'ចេះប្រើប៊ូតុងបណ្តេញចេញពេលមានបញ្ហា Tune In', risk: 'ជនបង្កបញ្ហារំខានដល់ការប្រជុំទាំងមូល Tune In', rec: 'រៀនប្រើ Host controls ឱ្យបានស្ទាត់' },
+                { id: 'wm8', title: 'Meeting App Encryption', sub: 'ប្រើ App ដែលមាន End-to-end encryption Tune In', risk: 'Hacker អាចលួចស្តាប់ការសន្ទនាតាមប្រព័ន្ធ Tune In', rec: 'ប្រើ Zoom, Teams, ឬ Google Meet ផ្លូវការ' },
+                { id: 'wm9', title: 'Audio/Video off habit', sub: 'បិទ Mic និង Camera ជានិច្ចពេលចប់ប្រជុំ Tune In', risk: 'គេលួចមើលសកម្មភាពក្រោយពេលប្រជុំ Tune In', rec: 'ប្រាកដថាបានចាកចេញពី Room ទាំងស្រុង' },
+                { id: 'wm10', title: 'No Unknown Chat Files use', sub: 'មិនដំឡើង File ដែលផ្ញើមកក្នុង Meeting Chat Tune In', risk: 'File មេរោគដែល Hacker បញ្ជូនមក Tune In', rec: 'ផ្ញើឯកសារតាមរយៈ Email ការងារវិញ' }
             ]},
-            // REMOTE WORK (10 UNIQUE)
             { catId: 'work', subId: 'wk_rem', group: 'Remote Work Safety', items: [
-                { id: 'wr1', title: 'Company VPN Active', sub: 'ប្រើ VPN ក្រុមហ៊ុនរាល់ពេលចូល Access ឯកសារ Tune In', urgent: true, risk: 'Hacker ស្ទាក់យកទិន្នន័យតាម Network សាធារណៈ Tune In', rec: 'ប្រើ VPN ក្រុមហ៊ុន ឬ Cloudflare Warp' },
-                { id: 'wr2', title: 'Home Router Updates', sub: 'ធ្វើបច្ចុប្បន្នភាព Router Firmware នៅផ្ទះជានិច្ច Tune In', risk: 'ចន្លោះប្រហោង Router ឱ្យ Hacker ចូលក្នុងផ្ទះ Tune In', rec: 'ចូល Settings នៃ Router ដើម្បី Update' },
-                { id: 'wr3', title: 'Router Password Set', sub: 'ប្តូរ Password Router មិនឱ្យដូចដែលក្រុមហ៊ុនកំណត់ Tune In', urgent: true, risk: 'Hacker ងាយស្រួលទាយលេខកូដដើម (Default) Tune In', rec: 'ប្រើ Password ខ្លាំងសម្រាប់ WiFi ផ្ទះ' },
-                { id: 'wr4', title: 'Separated Work Profile', sub: 'ប្រើ Browser Profile ការងារផ្សេងពីផ្ទាល់ខ្លួន Tune In', risk: 'ច្រឡំផ្ញើ Link ឬទិន្នន័យខុសកន្លែង Tune In', rec: 'ប្រើ Chrome Profiles' },
-                { id: 'wr5', title: 'No Work Files on PC', sub: 'មិន Download ឯកសារក្រុមហ៊ុនទុកលើកុំព្យូទ័រផ្ទាល់ខ្លួន Tune In', risk: 'បាត់បង់ឯកសារ ឬបែកធ្លាយពេល PC មានបញ្ហា Tune In', rec: 'ប្រើ Cloud Editing (Online) ជានិច្ច' },
-                { id: 'wr6', title: 'Disk Encryption active', sub: 'បើកមុខងារ Disk Encryption (BitLocker) Tune In', urgent: true, risk: 'បើបាត់កុំព្យូទ័រ គេអាចដកយកឯកសារក្រុមហ៊ុន Tune In', rec: 'បើក Encryption ក្នុង OS Settings' },
-                { id: 'wr7', title: 'Camera Physical cover', sub: 'បិទកាមេរ៉ាជានិច្ចពេលដែលមិនកំពុងប្រជុំ Tune In', risk: 'Hacker អាចលួចមើលសកម្មភាពអ្នកតាមមេរោគ Tune In', rec: 'ប្រើស្កុតបិទ ឬ Webcam Cover' },
-                { id: 'wr8', title: 'Remote Wipe Device set', sub: 'ដឹងពីរបៀបលុបទិន្នន័យពីចម្ងាយលើម៉ាស៊ីនការងារ Tune In', risk: 'មិនអាចការពារទិន្នន័យបានពេលបាត់ម៉ាស៊ីន Tune In', rec: 'ដំឡើង Find My Device ឱ្យបានត្រឹមត្រូវ' },
-                { id: 'wr9', title: 'Shared Workspace policy', sub: 'មិនធ្វើការក្នុងកន្លែងដែលគេអាចមើលឃើញអេក្រង់ Tune In', risk: 'ព័ត៌មានសម្ងាត់អតិថិជនត្រូវបែកធ្លាយ Tune In', rec: 'កុំអង្គុយបែរខ្នងទៅរកផ្លូវដើរ' },
+                { id: 'wr1', title: 'Company VPN Active habit', sub: 'ប្រើ VPN ក្រុមហ៊ុនរាល់ពេលចូល Access ឯកសារ Tune In', urgent: true, risk: 'Hacker ស្ទាក់យកទិន្នន័យតាម Network សាធារណៈ Tune In', rec: 'បើក VPN មុននឹងចាប់ផ្តើមធ្វើការ' },
+                { id: 'wr2', title: 'Home Router Updates rule', sub: 'ធ្វើបច្ចុប្បន្នភាព Router Firmware នៅផ្ទះជានិច្ច Tune In', risk: 'ចន្លោះប្រហោង Router ឱ្យ Hacker ចូលក្នុងផ្ទះ Tune In', rec: 'ចូល Settings នៃ Router ដើម្បី Update' },
+                { id: 'wr3', title: 'Router Password Set rule', sub: 'ប្តូរ Password Router មិនឱ្យដូចដែលក្រុមហ៊ុនកំណត់ Tune In', urgent: true, risk: 'Hacker ងាយស្រួលទាយលេខកូដដើម (Default) Tune In', rec: 'ប្រើ Password ខ្លាំងសម្រាប់ WiFi ផ្ទះ' },
+                { id: 'wr4', title: 'Separated Browser Profile', sub: 'ប្រើ Browser Profile ការងារផ្សេងពីផ្ទាល់ខ្លួន Tune In', risk: 'ច្រឡំផ្ញើ Link ឬទិន្នន័យខុសកន្លែង Tune In', rec: 'ប្រើ Chrome Person/Profiles' },
+                { id: 'wr5', title: 'No Work Files on Local PC', sub: 'មិន Download ឯកសារក្រុមហ៊ុនទុកលើ PC ផ្ទាល់ខ្លួន Tune In', risk: 'បាត់បង់ឯកសារ ឬបែកធ្លាយពេល PC មានបញ្ហា Tune In', rec: 'ប្រើ Cloud Editing (Online) ជានិច្ច' },
+                { id: 'wr6', title: 'Full Disk Encryption set', sub: 'បើកមុខងារ Disk Encryption (BitLocker) Tune In', urgent: true, risk: 'បើបាត់កុំព្យូទ័រ គេអាចដកយកឯកសារក្រុមហ៊ុន Tune In', rec: 'បើក Encryption ក្នុង OS Settings' },
+                { id: 'wr7', title: 'Camera Privacy Policy set', sub: 'បិទកាមេរ៉ាជានិច្ចពេលដែលមិនកំពុងប្រជុំ Tune In', risk: 'Hacker អាចលួចមើលសកម្មភាពអ្នកតាមមេរោគ Tune In', rec: 'ប្រើស្កុតបិទ ឬ Webcam Cover' },
+                { id: 'wr8', title: 'Remote Wipe Device setup', sub: 'ដឹងពីរបៀបលុបទិន្នន័យពីចម្ងាយលើម៉ាស៊ីនការងារ Tune In', risk: 'មិនអាចការពារទិន្នន័យបានពេលបាត់ម៉ាស៊ីន Tune In', rec: 'ដំឡើង Find My Device ឱ្យបានត្រឹមត្រូវ' },
+                { id: 'wr9', title: 'Shared Space Privacy set', sub: 'មិនធ្វើការក្នុងកន្លែងដែលគេអាចមើលឃើញអេក្រង់ Tune In', risk: 'ព័ត៌មានសម្ងាត់អតិថិជនត្រូវបែកធ្លាយ Tune In', rec: 'កុំអង្គុយបែរខ្នងទៅរកផ្លូវដើរ' },
                 { id: 'wr10', title: 'IT Support Contact list', sub: 'រក្សាទុកលេខទំនាក់ទំនងផ្នែក IT ក្នុងទូរស័ព្ទ Tune In', risk: 'យឺតយ៉ាវក្នុងការរាយការណ៍ពេលមានការ Hack Tune In', rec: 'កត់លេខ Hotlines IT ក្រុមហ៊ុនទុក' }
             ]},
-            // JOB SAFETY (10 UNIQUE)
-            { catId: 'work', subId: 'wk_job', group: 'Job & Recruitment Safety', items: [
-                { id: 'wj1', title: 'Zero Upfront Payment', sub: 'ក្រុមហ៊ុនពិតមិនដែលទារលុយមុនពេលចូលធ្វើការ Tune In', urgent: true, risk: 'បង់លុយឱ្យជនបោកប្រាស់ រួចគេបាត់ខ្លួន Tune In', rec: 'ហាមផ្ញើលុយឱ្យអ្នកដែលថាផ្តល់ការងារ' },
-                { id: 'wj2', title: 'Verify Company Web', sub: 'ឆែកមើល Domain ក្រុមហ៊ុនឱ្យបានត្រឹមត្រូវ Tune In', risk: 'Domain បន្លំដែលប្រើ @gmail.com ឬប្តូរអក្សរ Tune In', rec: 'ឆែកមើល URL ឱ្យបាន ៣ ដង' },
-                { id: 'wj3', title: 'Official Interview platforms', sub: 'សម្ភាសន៍តាមរយៈប្រព័ន្ធផ្លូវការ (Zoom, Teams, Meet) Tune In', risk: 'ការសម្ភាសន៍តែតាម Telegram ឆាត គ្មាន Video Tune In', rec: 'សុំសម្ភាសន៍ដោយឃើញមុខជានិច្ច' },
-                { id: 'wj4', title: 'Recruiter Audit policy', sub: 'ឆែកមើល Profile អ្នកដែលទាក់ទងមកអ្នក Tune In', risk: 'ជនបោកប្រាស់បន្លំយករូបគេមកប្រើដើម្បីបោក Tune In', rec: 'មើលកាលបរិច្ឆេទបង្កើត Profile' },
-                { id: 'wj5', title: 'Salary Rationality test', sub: 'ប្រាក់ខែខ្ពស់ហួសពីការពិត គឺជាសញ្ញានៃការបោក Tune In', risk: 'ត្រូវគេលួងលោមឱ្យទៅធ្វើការខុសច្បាប់ Tune In', rec: 'ប្រៀបធៀបប្រាក់ខែក្នុងទីផ្សារការងារ' },
-                { id: 'wj6', title: 'No ID Card Pre-share', sub: 'មិនផ្តល់រូបថត ID Card ឱ្យគេតាមឆាតមុនជួបគ្នា Tune In', urgent: true, risk: 'គេយកអត្តសញ្ញាណអ្នកទៅខ្ចីលុយអនឡាញ Tune In', rec: 'ផ្តល់ឱ្យតែពេលជួបសម្ភាសន៍ផ្ទាល់' },
-                { id: 'wj7', title: 'Contract Scrutiny policy', sub: 'អានកិច្ចសន្យាការងារឱ្យច្បាស់ មុននឹងចុះហត្ថលេខា Tune In', risk: 'ជាប់ក្នុងអន្ទាក់ការងារដែលបំពានសិទ្ធិមនុស្ស Tune In', rec: 'សុំយកមកពិនិត្យនៅផ្ទះមុននឹងស៊ីញ៉េ' },
-                { id: 'wj8', title: 'Office Location verification', sub: 'ស៊ើបមើលទីតាំងក្រុមហ៊ុនថានៅឯណាពិតប្រាកដ Tune In', risk: 'ត្រូវគេនាំយកទៅកន្លែងគ្រោះថ្នាក់ Tune In', rec: 'Search ទីតាំងលើ Google Maps' },
-                { id: 'wj9', title: 'Job Board Trust list', sub: 'ស្វែងរកការងារលើ LinkedIn ឬ Web ល្បីៗ Tune In', risk: 'គ្រុបការងារក្នុង FB ភាគច្រើនបង្កប់ដោយ Scam Tune In', rec: 'ជៀសវាងការងារតាម Inbox ប្លែកៗ' },
-                { id: 'wj10', title: 'Professional References', sub: 'សួរមិត្តភក្តិក្នុងវិស័យការងារអំពីក្រុមហ៊ុននោះ Tune In', risk: 'ចូលធ្វើការក្នុងក្រុមហ៊ុនមានកេរ្តិ៍ឈ្មោះអាក្រក់ Tune In', rec: 'ចូលគ្រុបការងារដើម្បីស៊ើបសួរព័ត៌មាន' }
+            { catId: 'work', subId: 'wk_job', group: 'Recruitment Safety', items: [
+                { id: 'wj1', title: 'Zero Upfront Pay habit', sub: 'ក្រុមហ៊ុនពិតមិនដែលទារលុយមុនពេលចូលធ្វើការ Tune In', urgent: true, risk: 'បង់លុយឱ្យជនបោកប្រាស់ រួចគេបាត់ខ្លួន Tune In', rec: 'ហាមផ្ញើលុយឱ្យអ្នកដែលថាផ្តល់ការងារ' },
+                { id: 'wj2', title: 'Company Web Verify habit', sub: 'ឆែកមើល Domain ក្រុមហ៊ុនឱ្យបានត្រឹមត្រូវ Tune In', risk: 'Domain បន្លំដែលប្រើ @gmail.com ឬប្តូរអក្សរ Tune In', rec: 'ឆែកមើល URL ឱ្យបាន ៣ ដង' },
+                { id: 'wj3', title: 'Interview Platform check', sub: 'សម្ភាសន៍តាមរយៈប្រព័ន្ធផ្លូវការ (Zoom, Teams, Meet) Tune In', risk: 'ការសម្ភាសន៍តែតាម Telegram ឆាត គ្មាន Video Tune In', rec: 'សុំសម្ភាសន៍ដោយឃើញមុខជានិច្ច' },
+                { id: 'wj4', title: 'Recruiter Audit policy set', sub: 'ឆែកមើល Profile អ្នកដែលទាក់ទងមកអ្នក Tune In', risk: 'ជនបោកប្រាស់បន្លំយករូបគេមកប្រើដើម្បីបោក Tune In', rec: 'មើលកាលបរិច្ឆេទបង្កើត Profile' },
+                { id: 'wj5', title: 'Salary Logic test habit', sub: 'ប្រាក់ខែខ្ពស់ហួសពីការពិត គឺជាសញ្ញានៃការបោក Tune In', risk: 'ត្រូវគេលួងលោមឱ្យទៅធ្វើការខុសច្បាប់ Tune In', rec: 'ប្រៀបធៀបប្រាក់ខែក្នុងទីផ្សារការងារ' },
+                { id: 'wj6', title: 'No ID Card Pre-share set', sub: 'មិនផ្តល់រូបថត ID Card ឱ្យគេតាមឆាតមុនជួបគ្នា Tune In', urgent: true, risk: 'គេយកអត្តសញ្ញាណអ្នកទៅខ្ចីលុយអនឡាញ Tune In', rec: 'ផ្តល់ឱ្យតែពេលជួបសម្ភាសន៍ផ្ទាល់' },
+                { id: 'wj7', title: 'Contract Scrutiny policy set', sub: 'អានកិច្ចសន្យាការងារឱ្យច្បាស់ មុននឹងចុះហត្ថលេខា Tune In', risk: 'ជាប់ក្នុងអន្ទាក់ការងារដែលបំពានសិទ្ធិមនុស្ស Tune In', rec: 'សុំយកមកពិនិត្យនៅផ្ទះមុននឹងស៊ីញ៉េ' },
+                { id: 'wj8', title: 'Office Location Verify act', sub: 'ស៊ើបមើលទីតាំងក្រុមហ៊ុនថានៅឯណាពិតប្រាកដ Tune In', risk: 'ត្រូវគេនាំយកទៅកន្លែងគ្រោះថ្នាក់ Tune In', rec: 'Search ទីតាំងលើ Google Maps' },
+                { id: 'wj9', title: 'Job Board Trust list usage', sub: 'ស្វែងរកការងារលើ LinkedIn ឬ Web ល្បីៗ Tune In', risk: 'គ្រុបការងារក្នុង FB ភាគច្រើនបង្កប់ដោយ Scam Tune In', rec: 'ជៀសវាងការងារតាម Inbox ប្លែកៗ' },
+                { id: 'wj10', title: 'Reference Confirmation act', sub: 'សួរមិត្តភក្តិក្នុងវិស័យការងារអំពីក្រុមហ៊ុននោះ Tune In', risk: 'ចូលធ្វើការក្នុងក្រុមហ៊ុនមានកេរ្តិ៍ឈ្មោះអាក្រក់ Tune In', rec: 'ចូលគ្រុបការងារដើម្បីស៊ើបសួរព័ត៌មាន' }
+            ]},
+            // WELLBEING (10 UNIQUE)
+            { catId: 'wellbeing', group: 'Digital Mental Health', items: [
+                { id: 'wb1', title: 'Daily Screen Limits set', sub: 'កំណត់ម៉ោងប្រើប្រាស់ក្នុង App នីមួយៗ Tune In', risk: 'ប៉ះពាល់ការងារ និងបាត់បង់ផលិតភាព Tune In', rec: 'ប្រើ Screen Time លើ iOS/Android' },
+                { id: 'wb2', title: 'Bedtime Rule commitment', sub: 'មិនប្រើទូរស័ព្ទយ៉ាងតិច ៣០ នាទីមុនគេង Tune In', risk: 'ប៉ះពាល់គុណភាពដំណេក និងភ្នែក Tune In', rec: 'ដាក់ទូរស័ព្ទឱ្យឆ្ងាយពីក្បាលដំណេក' },
+                { id: 'wb3', title: 'Toxic Mute Policy set', sub: 'Block ឬ Mute រាល់ Content ដែលនាំឱ្យ Stress Tune In', risk: 'នាំឱ្យមានអារម្មណ៍អវិជ្ជមាន និងបាក់ទឹកចិត្ត Tune In', rec: 'ជ្រើសរើស Follow តែអ្នកដែលផ្តល់ក្តីសុខ' },
+                { id: 'wb4', title: 'Anti-Doomscrolling habit', sub: 'មិនអានព័ត៌មានអវិជ្ជមានលើសពី ២០ នាទី Tune In', risk: 'នាំឱ្យមានការភ័យខ្លាច និង Stress រ៉ាំរ៉ៃ Tune In', rec: 'កំណត់ពេលអានព័ត៌មានឱ្យច្បាស់' },
+                { id: 'wb5', title: 'No Social Comparison', sub: 'ដឹងថាជីវិតអនឡាញ មិនមែនជារឿងពិតទាំងអស់ Tune In', risk: 'នាំឱ្យមានការប្រៀបធៀប និងបាក់ទឹកចិត្ត Tune In', rec: 'ផ្តោតលើអ្វីដែលអ្នកមានក្នុងជីវិតពិត' },
+                { id: 'wb6', title: 'Physical Meetup balance', sub: 'ជួបមិត្តភក្តិផ្ទាល់ដោយមិនមើលទូរស័ព្ទ Tune In', risk: 'បាត់បង់ទំនាក់ទំនងពិតប្រាកដក្នុងសង្គម Tune In', rec: 'កំណត់ No-Phone Zone ពេលញ៉ាំបាយ' },
+                { id: 'wb7', title: 'Digital Detox Day set', sub: 'ឈប់ប្រើបច្ចេកវិទ្យា ១ ថ្ងៃក្នុងមួយសប្តាហ៍ Tune In', risk: 'ខួរក្បាលហត់នឿយខ្លាំងជាមួយព័ត៌មាន Tune In', rec: 'ទៅដើរលេង ឬធ្វើលំហាត់ប្រាណជំនួស' },
+                { id: 'wb8', title: 'Silent Notification set', sub: 'បិទការដាស់តឿន App ដែលមិនចាំបាច់ Tune In', risk: 'ធ្វើឱ្យបាត់បង់ការផ្ដោតអារម្មណ៍រាល់ ៥ នាទី Tune In', rec: 'បើក Do Not Disturb ពេលធ្វើការ' },
+                { id: 'wb9', title: 'Focus and Clarity active', sub: 'ប្រើមុខងារ Focus Mode លើទូរស័ព្ទ Tune In', risk: 'ធ្វើការមិនទាន់ នាំឱ្យ Stress កាន់តែខ្លាំង Tune In', rec: 'បិទ Social Media ពេលដល់ម៉ោងធ្វើការ' },
+                { id: 'wb10', title: 'Safe Decision Protocol', sub: 'មិនតបត ឬផ្ញើលុយពេលកំពុងភ័យខ្លាច Tune In', urgent: true, risk: 'ងាយនឹងចាញ់បោកជនខិលខូច Tune In', rec: 'ដកដង្ហើមវែងៗ ហើយសួរអ្នកជិតខ្លួន' }
+            ]},
+            // COMMUNITY (10 UNIQUE)
+            { catId: 'community', group: 'Social Awareness', items: [
+                { id: 'c1', title: 'Donation Fraud check', sub: 'Verify ឱ្យច្បាស់មុនផ្ញើលុយជួយសង្គម Tune In', urgent: true, risk: 'ផ្ញើលុយឱ្យជនបោកប្រាស់បន្លំរូបភាព Tune In', rec: 'ផ្ញើទៅស្ថាប័នផ្លូវការដែលទុកចិត្ត' },
+                { id: 'c2', title: 'Authority Fake verify', sub: 'សមត្ថកិច្ចមិនដែលតេមកទារលុយទេ Tune In', urgent: true, risk: 'ចាញ់បោកការគំរាមកំហែងតាមទូរស័ព្ទ Tune In', rec: 'បិទទូរស័ព្ទ រួចទៅប្តឹងប៉ូលីសផ្ទាល់' },
+                { id: 'c3', title: 'Ethics in Social comms', sub: 'មិនប្រើពាក្យសម្តីជេរប្រមាថ Online Tune In', risk: 'អាចប្រឈមមុខនឹងច្បាប់ឌីជីថល Tune In', rec: 'បញ្ចេញមតិប្រកបដោយសីលធម៌' },
+                { id: 'c4', title: 'Fact Check Habits set', sub: 'មិនចែកចាយព័ត៌មានមិនបានផ្ទៀងផ្ទាត់ Tune In', risk: 'បង្កជាចលាចល និងប៉ះពាល់កិត្តិយសគេ Tune In', rec: 'ឆែកមើលប្រភពផ្លូវការមុន Share' },
+                { id: 'c5', title: 'Public Report channel', sub: 'ជួយ Report Content អាសអាភាស ឬហិង្សា Tune In', risk: 'ប៉ះពាល់ដល់កុមារ និងសង្គមជាតិ Tune In', rec: 'ប្រើប៊ូតុង Report លើ Social Media' },
+                { id: 'c6', title: 'Privacy neighborhood act', sub: 'មិនថតរូបអ្នកដទៃបង្ហោះដោយគ្មានសិទ្ធិ Tune In', risk: 'បំពានសិទ្ធិឯកជនរបស់អ្នកដទៃ Tune In', rec: 'សុំគេសិនមុននឹងថតរូបបង្ហោះ' },
+                { id: 'c7', title: 'Community Rules aware', sub: 'យល់ដឹងពីគោលការណ៍សហគមន៍ Social App Tune In', risk: 'Account អាចត្រូវបិទដោយសារបំពានច្បាប់ Tune In', rec: 'អានគោលការណ៍មូលដ្ឋានឱ្យបានខ្លះ' },
+                { id: 'c8', title: 'No Online Harassment act', sub: 'មិនតបតជាមួយជនដែលមករករឿង (Trolls) Tune In', risk: 'នាំឱ្យបាត់បង់សេចក្តីសុខ និង Stress Tune In', rec: 'ប្រើមុខងារ Block និង Ignore ជានិច្ច' },
+                { id: 'c9', title: 'Charity Confirmation act', sub: 'សួរមិត្តភក្តិមុនផ្ញើលុយជួយបុណ្យ Online Tune In', risk: 'ចាញ់បោក Account ក្លែងក្លាយដែលបន្លំខ្លួន Tune In', rec: 'Verify ជាមួយម្ចាស់កម្មវិធីផ្ទាល់' },
+                { id: 'c10', title: 'Official Source verify', sub: 'តាមដានតែ Page ផ្លូវការដែលមាន Blue Tick Tune In', risk: 'ជឿព័ត៌មានខុសពី Page បន្លំឈ្មោះ Tune In', rec: 'Verify សញ្ញាគ្រីសមុននឹងជឿព័ត៌មាន' }
+            ]},
+            // DATA (10 UNIQUE)
+            { catId: 'data', group: 'Data Protection', items: [
+                { id: 'dt1', title: 'Cloud Password lock', sub: 'ដាក់ 2FA លើ Google Drive/iCloud Tune In', urgent: true, risk: 'Hacker ចូលបាន នឹងបានឯកសារទាំងអស់ Tune In', rec: 'ប្រើ Password ខ្លាំងបំផុត' },
+                { id: 'dt2', title: 'Metadata removal policy', sub: 'លុបទីតាំងចេញពីរូបភាពមុនបង្ហោះ Tune In', risk: 'គេដឹងថាអ្នកនៅឯណា ឬផ្ទះនៅឯណា Tune In', rec: 'បិទ Location ក្នុង Camera settings' },
+                { id: 'dt3', title: 'Browser Privacy habits', sub: 'សម្អាត History និង Cookies ជាប្រចាំ Tune In', risk: 'Web តាមដានរាល់សកម្មភាពរបស់អ្នក Tune In', rec: 'ប្រើមុខងារ Clear Browsing Data' },
+                { id: 'dt4', title: 'No Sensitive info in AI', sub: 'មិនដាក់លេខសម្ងាត់ក្នុង ChatGPT/AI Tune In', risk: 'ទិន្នន័យអ្នកអាចក្លាយជាចំណេះដឹងសាធារណៈ Tune In', rec: 'ហាមដាក់ព័ត៌មានសម្ងាត់ក្រុមហ៊ុនក្នុង AI' },
+                { id: 'dt5', title: 'Cleanup Bank screenshots', sub: 'លុបរូបភាពកាតធនាគារក្នុង Album Tune In', risk: 'App ខ្លះអាចលួចចូលមើលរូបភាពបាន Tune In', rec: 'ទុកក្នុង Folder Locked បើចាំបាច់' },
+                { id: 'dt6', title: 'Public WiFi VPN policy', sub: 'ប្រើ VPN ពេលភ្ជាប់ WiFi សាធារណៈ Tune In', risk: 'Hacker ស្ទាក់យកទិន្នន័យដែលអ្នកផ្ញើ Tune In', rec: 'ប្រើ Cloudflare Warp (1.1.1.1)' },
+                { id: 'dt7', title: 'Audit Third-party apps', sub: 'ឆែកមើល App ដែលភ្ជាប់ជាមួយ Gmail/FB Tune In', risk: 'App ចាស់ៗនៅតែលួចទិន្នន័យអ្នកបាន Tune In', rec: 'ដកសិទ្ធិចេញពី App ដែលអ្នកលែងប្រើ' },
+                { id: 'dt8', title: 'Email Spam Filter act', sub: 'មិនបើក Email ក្នុងប្រអប់ Spam Tune In', risk: 'មេរោគអាចឆ្លងចូលម៉ាស៊ីនភ្លាមៗ Tune In', rec: 'លុប Spam Email ចោលឱ្យអស់' },
+                { id: 'dt9', title: 'Link Expiry habit', sub: 'កំណត់ពេលផុតកំណត់ឱ្យ Link ដែលបាន Share Tune In', risk: 'Link ចាស់ៗនៅចំហរឱ្យគេចូលមើលបាន Tune In', rec: 'ដកសិទ្ធិចូលមើលក្រោយចប់ការងារ' },
+                { id: 'dt10', title: 'Reliable Cloud Backup', sub: 'Backup ឯកសារលើ Cloud សុវត្ថិភាព Tune In', urgent: true, risk: 'បាត់ទូរស័ព្ទ បាត់ឯកសាររហូត Tune In', rec: 'ប្រើ Google Drive/iCloud ទុកជានិច្ច' }
+            ]},
+            // RESPONSE (10 UNIQUE)
+            { catId: 'response', group: 'Emergency Protocol', items: [
+                { id: 'r1', title: 'Account Lockdown steps', sub: 'ដឹងវិធីបិទ Account ភ្លាមៗពេលត្រូវ Hack Tune In', urgent: true, risk: 'Hacker នឹងលួចប្តូរព័ត៌មានអ្នកអស់ Tune In', rec: 'ដឹង Link report.facebook.com/hacked' },
+                { id: 'r2', title: 'Immediate Bank Lockdown', sub: 'តេទៅធនាគារបង្កកកុងភ្លាមក្រោយត្រូវបោក Tune In', urgent: true, risk: 'លុយនឹងត្រូវគេផ្ទេរចេញអស់ក្នុង ១ នាទី Tune In', rec: 'រក្សាទុកលេខ Hotline ធនាគារក្នុងទូរស័ព្ទ' },
+                { id: 'r3', title: 'Evidence preservation', sub: 'ថត Screenshot ទុកជាភស្តុតាងជានិច្ច Tune In', risk: 'បើគ្មានភស្តុតាង ពិបាកប្តឹងប៉ូលីស Tune In', rec: 'ថត Chat, Profile និងលេខគណនីជនល្មើស' },
+                { id: 'r4', title: 'Malware Scrutiny act', sub: 'បើច្រឡំចុច Link ត្រូវ Scan មេរោគភ្លាម Tune In', risk: 'មេរោគកំពុងលួចទិន្នន័យក្នុងម៉ាស៊ីន Tune In', rec: 'ប្រើ Antivirus ឬ Factory Reset' },
+                { id: 'r5', title: 'Broadcast Identity alert', sub: 'ប្រកាសប្រាប់មិត្តភក្តិពេលត្រូវគេបន្លំឈ្មោះ Tune In', risk: 'មិត្តភក្តិអ្នកអាចនឹងត្រូវគេបោកបន្ត Tune In', rec: 'Post ប្រាប់គេឱ្យបានដឹងជាសាធារណៈ' },
+                { id: 'r6', title: 'Block Money Flow steps', sub: 'ទាក់ទងធនាគារម្ចាស់កុងដែលអ្នកផ្ញើទៅ Tune In', urgent: true, risk: 'លុយមិនអាចដកវិញបានបើទុកយូរ Tune In', rec: 'សុំធនាគារឱ្យជួយបង្កកទឹកប្រាក់នោះ' },
+                { id: 'r7', title: 'Remote Wipe commitment', sub: 'ដឹងវិធីលុបទិន្នន័យពីចម្ងាយ (Remote Wipe) Tune In', risk: 'ចោរនឹងឃើញរូបភាព និងឆាតរបស់អ្នក Tune In', rec: 'ប្រើ Find My Device ដើម្បី Erase Data' },
+                { id: 'r8', title: 'Police Report steps', sub: 'ដឹងកន្លែងប្តឹងបទល្មើសបច្ចេកវិទ្យា Tune In', risk: 'ជនល្មើសនឹងបន្តបោកអ្នកដទៃទៀត Tune In', rec: 'ប្តឹងទៅនាយកដ្ឋានប្រឆាំងបទល្មើសបច្ចេកវិទ្យា' },
+                { id: 'r9', title: 'Full Credentials Reset', sub: 'ប្តូរ Password គ្រប់ App ក្រោយត្រូវ Hack មួយ Tune In', urgent: true, risk: 'Hacker នឹងបន្តចូល App ផ្សេងទៀតរបស់អ្នក Tune In', rec: 'ប្តូរ Password ឱ្យលឿនបំផុត' },
+                { id: 'r10', title: 'Hacker Cleanup audit', sub: 'ពិនិត្យសិទ្ធិដែល Hacker បានដំឡើងថ្មី Tune In', risk: 'Hacker នៅតែអាចចូលបានទោះប្តូរ Pass Tune In', rec: 'ពិនិត្យ Settings > Apps and Sessions' }
             ]}
         ];
-
-        // FILLER LOGIC FOR REMAINING 200+ ITEMS
-        const fillerTopics = [
-            { catId: 'finance', subId: 'shopping', name: 'Shop' }, { catId: 'finance', subId: 'ewallet', name: 'Wallet' },
-            { catId: 'wellbeing', name: 'Well' }, { catId: 'community', name: 'Comm' },
-            { catId: 'response', name: 'Res' }, { catId: 'data', name: 'Data' }
-        ];
-
-        fillerTopics.forEach(t => {
-            const items = Array.from({length: 10}, (_, i) => ({
-                id: `${t.name}${i+1}`, title: `${t.name} Protection Check ${i+1} Tune In`, sub: ` Security step for ${t.name} Tune In`,
-                risk: `Safety impact on ${t.name} Tune In`, rec: `Consult prescription after audit Tune In`
-            }));
-            checklistData.push({ catId: t.catId, subId: t.subId || null, group: `${t.name} Hygiene`, items });
-        });
 
         let checkedItems = new Set();
         let activeCat = 'social';
@@ -409,6 +507,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderCategories();
             setFilter('social');
+            startCarousel();
             lucide.createIcons();
         });
 
@@ -418,7 +517,7 @@
             bar.innerHTML = categories.map(cat => {
                 const stats = calculateCategoryStats(cat.id);
                 return `
-                <div onclick="setFilter('${cat.id}')" id="cat-${cat.id}" class="cat-tab flex flex-col items-center justify-center gap-1 cursor-pointer tap-scale p-2 min-w-[65px] lg:flex-row lg:justify-between lg:px-4 lg:py-3 lg:w-full ${activeCat === cat.id ? 'cat-tab-active shadow-md' : 'bg-white text-gray-500'}">
+                <div onclick="setFilter('${cat.id}')" id="cat-${cat.id}" class="cat-tab flex flex-col items-center justify-center gap-1 cursor-pointer tap-scale p-2 min-w-[65px] lg:min-w-0 lg:flex-row lg:justify-between lg:px-4 lg:py-3 lg:w-full ${activeCat === cat.id ? 'cat-tab-active shadow-md' : 'bg-white text-gray-500'} shadow-sm">
                     <div class="flex flex-col lg:flex-row items-center gap-2">
                         <div class="icon-box w-7 h-7 ${cat.color} rounded-lg flex items-center justify-center text-white shadow-sm transition-all">
                             <i data-lucide="${cat.icon}" class="w-3.5 h-3.5"></i>
@@ -444,7 +543,7 @@
                     subContainer.classList.add('flex');
                     activeSub = subId || cat.subs[0].id;
                     subContainer.innerHTML = cat.subs.map(s => `
-                        <button onclick="setFilter('${catId}', '${s.id}')" class="sub-tab py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${activeSub === s.id ? 'active shadow-sm' : 'text-gray-400 bg-white/50'}">${s.label}</button>
+                        <button onclick="setFilter('${catId}', '${s.id}')" class="sub-tab py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${activeSub === s.id ? 'active shadow-sm' : 'text-gray-400 bg-white/50'}" style="touch-action: manipulation;">${s.label}</button>
                     `).join('');
                 }
             } else {
@@ -481,7 +580,7 @@
                                         ${item.urgent && !isChecked ? '<span class="w-1.5 h-1.5 rounded-full bg-clinic-danger inline-block ml-1 animate-pulse"></span>' : ''}
                                         <span class="text-[10px] text-gray-400 font-medium block mt-0.5 leading-relaxed">${item.sub}</span>
                                     </div>
-                                    <button onclick="event.stopPropagation(); toggleInfo('${item.id}')" class="w-7 h-7 flex items-center justify-center bg-gray-50 rounded-full text-gray-400 shrink-0 transition hover:text-clinic-primary"><i data-lucide="info" class="w-3.5 h-3.5"></i></button>
+                                    <button onclick="event.stopPropagation(); toggleInfo('${item.id}')" class="w-8 h-8 flex items-center justify-center bg-gray-50 rounded-full text-gray-400 shrink-0 transition hover:text-clinic-primary"><i data-lucide="info" class="w-3.5 h-3.5"></i></button>
                                 </div>
                                 <div id="info-${item.id}" class="accordion-content">
                                     <div class="accordion-inner mt-3 pt-3 border-t border-gray-50 space-y-2">
@@ -528,25 +627,24 @@
         function updateStats() {
             const catStats = calculateCategoryStats(activeCat);
             const badge = document.getElementById('category-progress-badge');
-            const count = document.getElementById('category-count');
             if (badge) badge.innerText = catStats.percent + "%";
-            if (count) count.innerText = `${catStats.checked}/${catStats.total}`;
 
             const score = calculateGlobalScore();
             const scoreText = document.getElementById('global-score-text');
             const mobileScoreText = document.getElementById('mobile-score-text');
             const mobileBar = document.getElementById('mobile-progress-bar');
+            const ring = document.getElementById('global-ring');
             const risk = document.getElementById('global-risk-label');
 
             if (scoreText) scoreText.innerText = score + "%";
             if (mobileScoreText) mobileScoreText.innerText = score + "%";
             if (mobileBar) mobileBar.style.width = score + "%";
-            if (ring = document.getElementById('global-ring')) ring.style.strokeDashoffset = 263.76 - (score / 100) * 263.76;
+            if (ring) ring.style.strokeDashoffset = 301.44 - (score / 100) * 301.44;
             
             if (risk) {
-                if(score >= 80) { risk.innerText = "Safe"; risk.className = "text-[11px] font-black text-clinic-secondary uppercase"; }
-                else if(score >= 50) { risk.innerText = "Moderate"; risk.className = "text-[11px] font-black text-clinic-warning uppercase"; }
-                else { risk.innerText = "High Risk"; risk.className = "text-[11px] font-black text-clinic-danger uppercase"; }
+                if(score >= 80) { risk.innerText = "Safe"; risk.className = "text-[11px] font-black text-clinic-secondary uppercase tracking-widest"; }
+                else if(score >= 50) { risk.innerText = "Moderate"; risk.className = "text-[11px] font-black text-clinic-warning uppercase tracking-widest"; }
+                else { risk.innerText = "High Risk"; risk.className = "text-[11px] font-black text-clinic-danger uppercase tracking-widest"; }
             }
         }
 
@@ -562,7 +660,7 @@
                     const catItems = checklistData.filter(d => d.catId === cat.id).flatMap(d => d.items);
                     const missed = catItems.filter(i => !checkedItems.has(i.id));
                     html += `
-                        <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+                        <div class="bg-white p-5 rounded-[24px] border border-gray-100 shadow-sm">
                             <h4 class="font-black text-xs uppercase tracking-tight text-clinic-primary mb-3">${cat.label} (ខ្វះខាត ${100-stats.percent}%)</h4>
                             <div class="space-y-3">
                                 ${missed.slice(0, 3).map(m => `
@@ -574,7 +672,7 @@
                     `;
                 }
             });
-            if (html === `<div class="space-y-6">`) html += `<div class="text-center py-10"><h3 class="text-lg font-black text-gray-800">សុខភាពឌីជីថលល្អឥតខ្ចោះ!</h3><p class="text-xs text-gray-500 mt-2">អ្នកបានការពារគ្រប់ចំណុចសំខាន់ៗរួចរាល់ហើយ។</p></div>`;
+            if (html === `<div class="space-y-6">`) html += `<div class="text-center py-10"><i data-lucide="shield-check" class="w-16 h-16 text-clinic-secondary mx-auto mb-4"></i><h3 class="text-lg font-black text-gray-800">សុខភាពឌីជីថលល្អឥតខ្ចោះ!</h3><p class="text-xs text-gray-500 mt-2">អ្នកបានការពារគ្រប់ចំណុចសំខាន់ៗរួចរាល់ហើយ។</p></div>`;
             html += `</div>`;
             modalBody.innerHTML = html;
             lucide.createIcons();
@@ -595,7 +693,24 @@
             }
         }
 
-        function startCarousel() {}
+        function startCarousel() {
+            const track = document.getElementById('carousel-track');
+            const dots = document.querySelectorAll('.carousel-dot');
+            if(!track) return;
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % 3;
+                track.style.transform = `translateX(-${currentSlide * 100}%)`;
+                dots.forEach((d, i) => d.style.opacity = i === currentSlide ? '1' : '0.4');
+            }, 5000);
+        }
+
+        function copyToClipboard(text) {
+            const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert("បានចម្លងលេខគណនី: " + text);
+        }
     </script>
 </body>
 </html>
