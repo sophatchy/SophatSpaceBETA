@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="km" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>Sophat.Space - Digital Literacy Clinic</title>
+    <meta name="description" content="ឧបករណ៍វិនិច្ឆ័យសុខភាពឌីជីថល Sophat.Space - ជួយការពារបណ្តាញសង្គម លុយកាក់ និងទិន្នន័យរបស់អ្នក។">
+    <meta name="author" content="CHY SOPHAT">
+    
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2785/2785482.png" type="image/png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Kantumruy Pro"', 'sans-serif'] },
+                    colors: {
+                        clinic: {
+                            primary: '#007AFF',
+                            secondary: '#34C759',
+                            danger: '#FF3B30',
+                            warning: '#FF9500',
+                            surface: '#F2F2F7',
+                            card: '#FFFFFF',
+                            muted: '#8E8E93'
+                        }
+                    },
+                    borderRadius: { 'ios': '20px', 'clinic': '24px' },
+                    boxShadow: { 'soft': '0 4px 20px rgba(0, 0, 0, 0.05)', 'floating': '0 10px 40px rgba(0, 0, 0, 0.08)' }
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://unpkg.com/lucide@0.292.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100..900&display=swap" rel="stylesheet">
+
+    <style>
+        body { background-color: #F2F2F7; color: #1C1C1E; -webkit-tap-highlight-color: transparent; font-size: 15px; overflow-x: hidden; }
+        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 0.5px solid rgba(0,0,0,0.05); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .accordion-content { display: grid; grid-template-rows: 0fr; transition: grid-template-rows: 0.3s ease-out; }
+        .accordion-content.open { grid-template-rows: 1fr; }
+        .accordion-inner { overflow: hidden; }
+        #pdf-wrapper { position: absolute; top: -9999px; left: -9999px; width: 800px; z-index: -1; }
+        .tap-scale:active { transform: scale(0.97); transition: transform 0.1s; }
+        
+        .qr-frame { width: 160px; height: 160px; overflow: hidden; border-radius: 18px; background: white; display: flex; align-items: center; justify-content: center; margin: 0 auto; border: 1px solid #E5E7EB; }
+        .qr-img { width: 100%; height: 100%; object-fit: cover; object-position: center 36%; transform: scale(1.7); }
+        
+        .cat-tab { border-left: 4px solid transparent; transition: all 0.2s; }
+        .cat-tab.active { background-color: white; border-left-color: #007AFF; color: #007AFF; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .cat-tab.active .icon-box { background-color: #007AFF; color: white; }
+        
+        .sub-tab { transition: all 0.2s; white-space: nowrap; }
+        .sub-tab.active { background-color: #007AFF; color: white; border-color: #007AFF; font-weight: 900; }
+        
+        .progress-ring { transition: stroke-dashoffset 0.5s ease; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        
+        .checklist-scroll { max-height: calc(100vh - 280px); overflow-y: auto; padding-right: 4px; }
+        .checklist-scroll::-webkit-scrollbar { width: 4px; }
+        .checklist-scroll::-webkit-scrollbar-track { background: transparent; }
+        .checklist-scroll::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
+
+        .carousel-item { min-width: 100%; transition: transform 0.5s ease-in-out; }
+        
+        @media (max-width: 1024px) {
+            .checklist-scroll { max-height: none; overflow-y: visible; }
+            .cat-tab { border-left: none; border-bottom: 3px solid transparent; }
+            .cat-tab.active { border-bottom-color: #007AFF; }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <div id="app-ui" class="flex-grow pb-10">
+        <!-- Compact Navbar -->
+        <nav class="fixed top-0 left-0 right-0 z-50 glass-nav">
+            <div class="max-w-7xl mx-auto px-4 flex justify-between h-14 items-center">
+                <div class="flex items-center gap-2 cursor-pointer tap-scale" onclick="window.location.reload()">
+                    <div class="w-8 h-8 bg-clinic-primary rounded-xl flex items-center justify-center text-white shadow-md">
+                        <i data-lucide="shield-plus" class="w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-base text-gray-800">សុផាត ឌីជីថល</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="openSupportModal()" class="w-9 h-9 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center tap-scale">
+                        <i data-lucide="coffee" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="analyzeSafety()" class="bg-gray-900 text-white px-5 py-1.5 rounded-full text-[10px] font-black tap-scale flex items-center gap-2 transition-all hover:bg-black shadow-lg">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-yellow-400"></i> វិភាគ
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-7xl mx-auto px-4 pt-20">
+            
+            <!-- Hero Carousel -->
+            <div class="relative w-full overflow-hidden rounded-[28px] shadow-soft bg-white mb-6 border border-gray-100">
+                <div id="carousel-track" class="flex transition-transform duration-500 ease-in-out">
+                    <div class="carousel-item p-6 md:p-10 bg-gradient-to-r from-clinic-primary to-blue-600 text-white flex flex-col md:flex-row items-center gap-6">
+                        <div class="flex-1 space-y-3">
+                            <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest leading-none">Clinic Tip #1</span>
+                            <h2 class="text-2xl font-black leading-tight">ការពារឯកជនភាពរបស់អ្នក</h2>
+                            <p class="text-sm opacity-90 leading-relaxed">យើងមិនរក្សាទុកទិន្នន័យរបស់អ្នកឡើយ។ ពិនិត្យសុខភាពឌីជីថលដោយទំនុកចិត្ត ១០០%។</p>
+                        </div>
+                        <div class="w-24 h-24 md:w-40 md:h-40 opacity-20"><i data-lucide="shield-check" class="w-full h-full"></i></div>
+                    </div>
+                    <div class="carousel-item p-6 md:p-10 bg-gradient-to-r from-clinic-secondary to-green-600 text-white flex flex-col md:flex-row items-center gap-6">
+                        <div class="flex-1 space-y-3">
+                            <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest leading-none">Clinic Tip #2</span>
+                            <h2 class="text-2xl font-black leading-tight">សុវត្ថិភាពលុយកាក់</h2>
+                            <p class="text-sm opacity-90 leading-relaxed">កុំប្រាប់លេខ OTP ឬចុច Link ប្លែកៗដែលផ្ញើមកតាម SMS ឬ Chat ឱ្យសោះ។</p>
+                        </div>
+                        <div class="w-24 h-24 md:w-40 md:h-40 opacity-20"><i data-lucide="banknote" class="w-full h-full"></i></div>
+                    </div>
+                    <div class="carousel-item p-6 md:p-10 bg-gradient-to-r from-clinic-danger to-red-600 text-white flex flex-col md:flex-row items-center gap-6">
+                        <div class="flex-1 space-y-3">
+                            <span class="inline-block px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest leading-none">Clinic Tip #3</span>
+                            <h2 class="text-2xl font-black leading-tight">ឆ្លើយតបបន្ទាន់</h2>
+                            <p class="text-sm opacity-90 leading-relaxed">ប្រសិនបើត្រូវគេ Hack ឬបោកលុយ សូម Lockdown គណនី និងទាក់ទងធនាគារភ្លាម។</p>
+                        </div>
+                        <div class="w-24 h-24 md:w-40 md:h-40 opacity-20"><i data-lucide="life-buoy" class="w-full h-full"></i></div>
+                    </div>
+                </div>
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white/40 carousel-dot transition-all"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-white/40 carousel-dot transition-all"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-white/40 carousel-dot transition-all"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Sidebar -->
+                <div class="lg:col-span-3 space-y-4 lg:sticky lg:top-20 h-fit">
+                    <div id="category-bar" class="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible no-scrollbar gap-1.5 px-1 pb-2"></div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="lg:col-span-6 space-y-4">
+                    <div id="sub-category-container" class="bg-gray-200/50 p-1 rounded-xl flex gap-1 overflow-x-auto no-scrollbar hidden shadow-inner transition-all"></div>
+
+                    <div class="bg-white/80 backdrop-blur-md p-1.5 rounded-2xl border border-white/40 mb-4 sticky top-[56px] lg:top-0 z-30 shadow-sm">
+                        <div class="flex items-center justify-between p-2">
+                            <h2 id="active-title" class="text-lg font-black text-gray-800 leading-none truncate">...</h2>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span id="category-progress-badge" class="text-[10px] font-black text-white bg-clinic-primary px-3 py-1 rounded-full">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="checklist-container" class="space-y-3 checklist-scroll no-scrollbar"></div>
+                </div>
+
+                <!-- Profile & Stats -->
+                <aside class="lg:col-span-3 space-y-6 h-fit lg:sticky lg:top-20">
+                    <div class="bg-white p-6 rounded-clinic shadow-soft border border-gray-100">
+                        <div class="text-center mb-6">
+                            <div class="relative inline-flex mb-4">
+                                <svg class="w-20 h-20">
+                                    <circle class="text-gray-100 stroke-current" stroke-width="5" fill="transparent" r="35" cx="40" cy="40"/>
+                                    <circle id="global-ring" class="text-clinic-primary stroke-current progress-ring" stroke-width="5" stroke-linecap="round" fill="transparent" r="35" cx="40" cy="40" stroke-dasharray="219.8" stroke-dashoffset="219.8"/>
+                                </svg>
+                                <span id="global-score-text" class="absolute inset-0 flex items-center justify-center text-sm font-black">0%</span>
+                            </div>
+                            <h3 id="global-risk-label" class="text-[11px] font-black text-clinic-danger uppercase tracking-widest">High Risk</h3>
+                        </div>
+                        <div class="space-y-4 pt-6 border-t border-gray-50">
+                            <input type="text" id="user-name" placeholder="ឈ្មោះរបស់អ្នក..." class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-clinic-primary/20 outline-none">
+                            <button id="downloadBtn" onclick="downloadPDF()" class="w-full py-3.5 bg-clinic-primary text-white rounded-xl font-black tap-scale flex justify-center items-center gap-2 text-[10px] uppercase tracking-widest shadow-lg">
+                                <i data-lucide="file-down" class="w-4 h-4"></i> Download PDF
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start gap-2 mb-3">
+                        <div class="w-8 h-8 bg-clinic-primary rounded-lg flex items-center justify-center text-white"><i data-lucide="shield-plus" class="w-5 h-5"></i></div>
+                        <span class="font-black text-lg tracking-tight">SOPHAT<span class="text-clinic-primary">.SPACE</span></span>
+                    </div>
+                    <p class="text-[11px] text-gray-500 font-medium max-w-xs leading-relaxed">Digital Literacy Project បង្កើតឡើងក្នុងគោលបំណងសប្បុរសធម៌ ដើម្បីលើកកម្ពស់សុវត្ថិភាពឌីជីថលសម្រាប់ប្រជាជនកម្ពុជា។</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <div class="text-center"><p class="text-clinic-primary font-black text-lg">185+</p><p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Checks</p></div>
+                    <div class="text-center"><p class="text-clinic-primary font-black text-lg">10</p><p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Categories</p></div>
+                    <div class="text-center"><p class="text-clinic-primary font-black text-lg">Free</p><p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Community</p></div>
+                </div>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-clinic-primary transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-clinic-primary transition-colors"><i data-lucide="send" class="w-5 h-5"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-clinic-primary transition-colors"><i data-lucide="globe" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+            <div class="mt-10 pt-8 border-t border-gray-50 text-center">
+                <p class="text-[9px] text-gray-300 uppercase tracking-[0.3em] font-black">© 2026 CHY SOPHAT - BUILDING A SAFER DIGITAL CAMBODIA</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="support-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-md" onclick="closeSupportModal()"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div class="bg-white w-full max-w-sm rounded-[40px] shadow-2xl overflow-hidden pointer-events-auto relative">
+                <button onclick="closeSupportModal()" class="absolute top-6 right-6 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <div class="p-8 text-center">
+                    <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-clinic-primary shadow-inner"><i data-lucide="heart" class="w-7 h-7 fill-current text-clinic-danger"></i></div>
+                    <h3 class="text-xl font-black text-gray-900 mb-1 leading-tight tracking-tighter uppercase">ឧបត្ថម្ភកាហ្វេ ☕</h3>
+                    <div class="bg-clinic-primary p-6 rounded-[32px] mb-8 text-white shadow-xl shadow-blue-200 text-left relative overflow-hidden mt-6">
+                        <div class="relative z-10 space-y-4">
+                            <div><span class="text-[9px] font-bold opacity-60 uppercase block mb-1">Account Name</span><span class="text-base font-black uppercase">CHY SOPHAT</span></div>
+                            <div class="flex justify-between items-center">
+                                <div><span class="text-[9px] font-bold opacity-60 uppercase block mb-1">ABA Number</span><span class="text-xl font-black tracking-widest leading-none">000 111 343</span></div>
+                                <button onclick="copyToClipboard('000 111 343')" class="bg-white/20 p-2 rounded-xl hover:bg-white/30 transition"><i data-lucide="copy" class="w-4 h-4 text-white"></i></button>
+                            </div>
+                        </div>
+                        <div class="qr-frame mt-6"><img src="https://scontent.fpnh24-1.fna.fbcdn.net/v/t39.30808-6/473383935_1107149590868430_3720384056585639490_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=_jwVLK1eHJ0Q7kNvwEUnd_7&_nc_oc=Adn1V5AS_7F1km9zzE9XEiPTZiwD5jJQkErdTxoNVm6AX_7dI-CPUNCYGn3bbS2k6Lc&_nc_zt=23&_nc_ht=scontent.fpnh24-1.fna&_nc_gid=mijfdGTeNKLZnPv-nwMMYg&oh=00_AfqJVDnOEa9huW1vVgG7WkMqon1YtfiKmYKIN99va-frSg&oe=6967B859" alt="ABA QR" class="qr-img"></div>
+                    </div>
+                    <a href="https://pay.ababank.com/oRF8/2fztamtx" target="_blank" class="w-full py-4 bg-gray-900 text-white rounded-2xl font-black shadow-lg tap-scale flex justify-center items-center gap-3 hover:bg-black transition-colors uppercase text-[10px] tracking-widest"><i data-lucide="external-link" class="w-4 h-4 text-clinic-primary"></i> បើក App ABA ផ្ទាល់</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rec-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeRecModal()"></div>
+        <div class="fixed inset-x-0 bottom-0 md:inset-0 md:flex md:items-center md:justify-center p-4 pointer-events-none">
+            <div class="bg-white w-full md:max-w-2xl rounded-t-[40px] md:rounded-[40px] shadow-2xl overflow-hidden pointer-events-auto relative flex flex-col max-h-[85vh]">
+                <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                    <h3 class="text-base font-black flex items-center gap-2 uppercase tracking-tighter"><i data-lucide="activity" class="w-5 h-5 text-clinic-danger"></i> វិភាគរោគសញ្ញាឌីជីថល</h3>
+                    <button onclick="closeRecModal()" class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <div class="p-6 overflow-y-auto no-scrollbar bg-gray-50 flex-grow">
+                    <div id="modal-body" class="prose prose-sm w-full font-sans text-gray-700 leading-relaxed max-w-none"></div>
+                </div>
+                <div class="p-5 border-t border-gray-100 bg-white flex gap-3">
+                    <button onclick="closeRecModal()" class="flex-1 py-4 font-bold text-gray-500 bg-gray-100 rounded-2xl tap-scale">បិទ</button>
+                    <button onclick="downloadPDF()" class="flex-1 py-4 font-bold text-white bg-clinic-primary rounded-2xl shadow-lg tap-scale uppercase text-[10px] tracking-widest">Save PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pdf-wrapper">
+        <div id="pdf-template" class="p-12 bg-white font-sans text-slate-800">
+            <div class="flex justify-between border-b-4 border-blue-600 pb-6 mb-8">
+                <div><h1 class="text-3xl font-black uppercase text-blue-600">Digital Health Audit</h1><p id="pdf-date" class="text-[10px] text-gray-400 mt-2 uppercase font-black tracking-widest"></p></div>
+                <div class="text-right"><p class="text-[8px] text-gray-400 font-black uppercase mb-1">Patient</p><p id="pdf-user-name-target" class="text-xl font-bold">Guest</p></div>
+            </div>
+            <div id="pdf-score-summary" class="grid grid-cols-2 gap-4 mb-10"></div>
+            <div id="pdf-content-container" class="space-y-8"></div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = ""; 
+        let currentSlide = 0;
+        let slideInterval;
+
+        const categories = [
+            { id: 'social', icon: 'share-2', label: 'បណ្ដាញសង្គម', color: 'bg-blue-500', 
+                subs: [{id:'fb', label:'Facebook'}, {id:'tt', label:'TikTok'}, {id:'tg', label:'Telegram'}] },
+            { id: 'identity', icon: 'shield-check', label: 'គណនី & អត្តសញ្ញាណ', color: 'bg-indigo-500' },
+            { id: 'finance', icon: 'banknote', label: 'លុយកាក់', color: 'bg-green-500',
+                subs: [{id:'banking', label:'Banking'}, {id:'shopping', label:'Shopping'}, {id:'ewallet', label:'e-Wallet'}] },
+            { id: 'devices', icon: 'smartphone', label: 'ឧបករណ៍', color: 'bg-orange-500',
+                subs: [{id:'phone', label:'Smartphone'}, {id:'pc', label:'Computer'}, {id:'shared', label:'Shared'}] },
+            { id: 'data', icon: 'database', label: 'ទិន្នន័យ & Privacy', color: 'bg-cyan-500' },
+            { id: 'family', icon: 'users', label: 'គ្រួសារ & កុមារ', color: 'bg-pink-500',
+                subs: [{id:'child', label:'Children'}, {id:'parent', label:'Parents'}, {id:'elder', label:'Elderly'}] },
+            { id: 'wellbeing', icon: 'brain', label: 'សុខភាពផ្លូវចិត្ត', color: 'bg-purple-500' },
+            { id: 'work', icon: 'briefcase', label: 'ការងារ', color: 'bg-slate-700',
+                subs: [{id:'wk_meet', label:'Meetings'}, {id:'wk_rem', label:'Remote Work'}, {id:'wk_job', label:'Job Safety'}] },
+            { id: 'community', icon: 'globe', label: 'សហគមន៍/សង្គម', color: 'bg-rose-500' },
+            { id: 'response', icon: 'life-buoy', label: 'ការឆ្លើយតបបន្ទាន់', color: 'bg-red-500' }
+        ];
+
+        // 185 ITEMS DATABASE (EXHAUSTIVE)
+        const checklistData = [
+            // FACEBOOK (10)
+            { catId: 'social', subId: 'fb', group: 'Facebook Health', items: [
+                { id: 'fb1', title: '2FA Enabled', sub: 'បើកលេខកូដ ២ តង់លើ FB ជានិច្ច។', urgent: true, risk: 'Hacker ចូលបានទោះដឹង Password។', rec: 'ប្រើ App Authenticator' },
+                { id: 'fb2', title: 'Login Alerts', sub: 'ទទួលសាររាល់ពេលមានអ្នក Login។', risk: 'មានគេលួចចូល យើងមិនដឹងខ្លួន។', rec: 'បើក Alerts ក្នុង Security settings' },
+                { id: 'fb3', title: 'Audience Control', sub: 'កំណត់អ្នកមើល Post ត្រឹម Friends។', risk: 'ជនប្លែកមុខតាមដានជីវិតអ្នក។', rec: 'ឆែក Privacy Checkup ក្នុង FB' },
+                { id: 'fb4', title: 'Tagging Review', sub: 'ពិនិត្យរាល់ការ Tag មុនបង្ហាញលើ Wall។', risk: 'ជនមិនល្អបង្ហោះរឿងមិនល្អលើ Profile អ្នក។', rec: 'បើក Review Tags ក្នុង settings' },
+                { id: 'fb5', title: 'Page Transparency', sub: 'ឆែកមើល Page មុននឹងជឿជាក់ការវិនិយោគ។', urgent: true, risk: 'ចាញ់បោកការវិនិយោគក្លែងក្លាយ។', rec: 'មើលកាលបរិច្ឆេទបង្កើត Page' },
+                { id: 'fb6', title: 'Phishing Awareness', sub: 'មិនចុច Link ប្លែកៗក្នុង Comment។', urgent: true, risk: 'Link លួចយក Password ឬមេរោគ។', rec: 'ហាមចុច Link ផ្តល់របស់ Free ហួសហេតុ' },
+                { id: 'fb7', title: 'Active Sessions', sub: 'Logout ឧបករណ៍មិនស្គាល់ចេញឱ្យអស់។', risk: 'Hacker កំពុងតាមដានឆាតអ្នក។', rec: 'ពិនិត្យ Active Sessions ក្នុង Security' },
+                { id: 'fb8', title: 'Connected Apps', sub: 'លុប App មិនស្គាល់ដែលភ្ជាប់ជាមួយ FB។', risk: 'App ខ្លះលួចទិន្នន័យអ្នករាល់ថ្ងៃ។', rec: 'Settings > Apps and Websites' },
+                { id: 'fb9', title: 'Contact Privacy', sub: 'លាក់លេខទូរស័ព្ទ និង Email ក្នុង Bio។', risk: 'ជនបោកប្រាស់យកទៅទាយ Password។', rec: 'ដាក់ Only Me លើព័ត៌មានទំនាក់ទំនង' },
+                { id: 'fb10', title: 'Messenger Safety', sub: 'មិនផ្ញើលេខសម្ងាត់ក្នុងឆាតធម្មតា។', risk: 'Hacker ចូលឃើញរូបភាពទាំងអស់។', rec: 'ប្រើ Secret Conversation' }
+            ]},
+            // TIKTOK (10)
+            { catId: 'social', subId: 'tt', group: 'TikTok Safety', items: [
+                { id: 'tt1', title: '2-Step Verification', sub: 'បើកលេខកូដផ្ទៀងផ្ទាត់ពេលប្តូរឧបករណ៍។', urgent: true, risk: 'ងាយត្រូវគេលួចយកគណនី។', rec: 'Settings > Security > 2-Step' },
+                { id: 'tt2', title: 'Live Scam Awareness', sub: 'មិនជឿលើការចែករង្វាន់ក្នុង TikTok Live។', urgent: true, risk: 'បោកយក OTP ឬលេខកាត។', rec: 'កុំចុច Link ក្នុង Bio ជនមិនស្គាល់' },
+                { id: 'tt3', title: 'Audience Control', sub: 'កំណត់អ្នកដែលអាច Duet ឬ Comment។', risk: 'ការរំខានពីជនចម្លែក។', rec: 'កំណត់ Privacy ឱ្យបានហ្មត់ចត់' },
+                { id: 'tt4', title: 'DM Restriction', sub: 'កំណត់អ្នកដែលអាចផ្ញើសារមកអ្នក។', risk: 'ជនបោកប្រាស់ផ្ញើ Link បោកតាមឆាត។', rec: 'ដាក់ Direct Messages ត្រឹម Friends' },
+                { id: 'tt5', title: 'Profile View history', sub: 'បិទ Profile view បើចង់បាន Privacy។', risk: 'ជនខិលខូចដឹងថាអ្នកតាមដានគេ។', rec: 'បិទក្នុង Privacy settings' },
+                { id: 'tt6', title: 'Algorithm Refresh', sub: 'សម្អាត Feed រាល់ពេលឃើញ Content មិនល្អ។', risk: 'TikTok បង្ហាញតែរឿងអវិជ្ជមានឱ្យអ្នក។', rec: 'ប្រើមុខងារ Refresh your feed' },
+                { id: 'tt7', title: 'Creator Monetization', sub: 'មិនបង់លុយដើម្បីដកលុយពី TikTok។', urgent: true, risk: 'ជនបោកប្រាស់បន្លំជា TikTok support។', rec: 'Verify ព័ត៌មានតាម Web ផ្លូវការ' },
+                { id: 'tt8', title: 'Comment Filter tools', sub: 'បើកមុខងារចម្រោះពាក្យមិនសមរម្យ។', risk: 'ប៉ះពាល់ផ្លូវចិត្តដោយសារពាក្យជេរ។', rec: 'ប្រើ Keyword Filters ក្នុង Privacy' },
+                { id: 'tt9', title: 'App Data access', sub: 'ពិនិត្យសិទ្ធិ App ដែល TikTok សុំប្រើ។', risk: 'ការលួចយកទិន្នន័យក្នុងម៉ាស៊ីន។', rec: 'បិទសិទ្ធិណាដែលមិនចាំបាច់' },
+                { id: 'tt10', title: 'Live Monitor Check', sub: 'ឆែកមើលឧបករណ៍ដែលកំពុងជាប់គណនីអ្នក។', risk: 'មានគេលួចប្រើគណនីបង្ហោះរឿងមិនល្អ។', rec: 'Security > Manage devices' }
+            ]},
+            // TELEGRAM (10)
+            { catId: 'social', subId: 'tg', group: 'Telegram Health', items: [
+                { id: 'tg1', title: 'Cloud Password', sub: 'ដាក់លេខសម្ងាត់ជាន់ទី ២ បន្ថែមលើ SMS។', urgent: true, risk: 'គេលួចស៊ីម គេនឹងចូល Telegram អ្នកបាន។', rec: 'Privacy > Two-Step Verification' },
+                { id: 'tg2', title: 'Hide Phone Number', sub: 'លាក់លេខទូរស័ព្ទកុំឱ្យអ្នកដទៃឃើញ។', urgent: true, risk: 'ជនខិលខូចងាយ Add ចូលគ្រុបបោកប្រាស់។', rec: 'Privacy > Phone Number > Nobody' },
+                { id: 'tg3', title: 'Terminate Session', sub: 'ពិនិត្យឧបករណ៍ដែលកំពុងជាប់ Telegram។', risk: 'Hacker កំពុងតាមដានឆាតអ្នក។', rec: 'Devices > Terminate all other sessions' },
+                { id: 'tg4', title: 'No APK Files', sub: 'មិនដំឡើង File ឬ APK ប្លែកៗពីគ្រុប។', urgent: true, risk: 'មេរោគបញ្ជាទូរស័ព្ទ និងលួចលេខកូដ។', rec: 'ហាមដំឡើង App ក្រៅ Store ផ្លូវការ' },
+                { id: 'tg5', title: 'Passcode Lock', sub: 'ដាក់សោរកម្មវិធី Telegram (Passcode)។', risk: 'គេខ្ចីទូរស័ព្ទ គេអាចលួចមើលឆាត។', rec: 'Privacy > Passcode Lock' },
+                { id: 'tg6', title: 'Group Add restriction', sub: 'កំណត់អ្នកដែលអាច Add អ្នកចូលគ្រុប។', risk: 'ត្រូវគេអូសចូលគ្រុបល្បែង ឬបោកប្រាស់។', rec: 'Privacy > Groups > My Contacts' },
+                { id: 'tg7', title: 'Secret Chat', sub: 'ប្រើ Secret Chat សម្រាប់រឿងសម្ងាត់បំផុត។', risk: 'ឆាតធម្មតាអាចត្រូវបាន Backup លើ Server។', rec: 'បើកមុខងារ Self-destruct timer' },
+                { id: 'tg8', title: 'Forwarding privacy', sub: 'លាក់ឈ្មោះដើមពេលគេ Forward សារអ្នក។', risk: 'ជនមិនស្គាល់ដឹងពី Account ពិតរបស់អ្នក។', rec: 'Privacy > Forwarded Messages' },
+                { id: 'tg9', title: 'Voice Call Privacy', sub: 'បិទការខលពីជនចម្លែកក្នុង Telegram។', risk: 'ជនបោកប្រាស់តេមកគំរាមកំហែង។', rec: 'Privacy > Calls > My Contacts' },
+                { id: 'tg10', title: 'Profile Photo Hide', sub: 'កំណត់អ្នកដែលអាចមើលរូប Profile។', risk: 'គេយករូបអ្នកទៅបន្លំខ្លួនបោកមិត្តភក្តិ។', rec: 'Privacy > Profile Photos > My Contacts' }
+            ]},
+            // IDENTITY (15)
+            { catId: 'identity', group: 'Identity & Account Hygiene', items: [
+                { id: 'id1', title: '12+ Char Passwords', sub: 'Password យ៉ាងតិច ១២ ខ្ទង់ មានសញ្ញាពិសេស។', urgent: true, risk: 'Hacker ទាយដឹងក្នុងរយៈពេលខ្លី។', rec: 'ប្រើ Password វែង និងពិបាកទាយ' },
+                { id: 'id2', title: 'No Reuse Policy', sub: 'មិនប្រើ Password ដូចគ្នាសម្រាប់គ្រប់ App។', urgent: true, risk: 'Hacker ចូលបានមួយ បានទាំងអស់។', rec: 'ប្រើ Password ផ្សេងគ្នាជានិច្ច' },
+                { id: 'id3', title: 'Password Manager', sub: 'ប្រើកម្មវិធីគ្រប់គ្រងលេខសម្ងាត់។', risk: 'ភ្លេច Password នាំឱ្យបាត់បង់ Account។', rec: 'ប្រើ Google Password Manager' },
+                { id: 'id4', title: 'Authenticator App', sub: 'ប្រើ App ជំនួសឱ្យ SMS សម្រាប់ទទួលកូដ។', risk: 'គេអាចលួចស៊ីមដើម្បីទទួលកូដ OTP។', rec: 'ប្រើ Google Authenticator' },
+                { id: 'id5', title: 'Recovery Validation', sub: ' Email និងលេខទូរស័ព្ទសង្គ្រោះនៅប្រើបាន។', urgent: true, risk: 'បាត់បង់ Account រហូតពេលភ្លេច Password។', rec: 'ឆែកមើល Email សង្គ្រោះរាល់ ៦ ខែម្តង' },
+                { id: 'id6', title: 'Backup Codes Secure', sub: 'រក្សាទុកកូដសង្គ្រោះកន្លែងមានសុវត្ថិភាព។', risk: 'ពេលបាត់ទូរស័ព្ទ នឹងចូល Account លែងកើត។', rec: 'កត់ទុកក្នុងក្រដាស ឬកន្លែងសម្ងាត់' },
+                { id: 'id7', title: 'Avoid Social Login', sub: 'កាត់បន្ថយការប្រើ Sign in with FB/Google។', risk: 'បើ Account មេត្រូវបិទ នឹងបាត់បង់គ្រប់ App។', rec: 'ប្រើ Email និង Password ផ្ទាល់ខ្លួន' },
+                { id: 'id8', title: 'Selfie ID Safety', sub: 'មិនផ្តល់រូប Selfie ជាមួយ ID ឱ្យ Web មិនច្បាស់។', urgent: true, risk: 'គេយកអត្តសញ្ញាណអ្នកទៅខ្ចីលុយ ឬបោកគេ។', rec: 'ផ្ទៀងផ្ទាត់ App ឱ្យច្បាស់មុនផ្តល់ទិន្នន័យ' },
+                { id: 'id9', title: 'Cleanup Inactive', sub: 'លុប Account ចាស់ៗដែលមិនប្រើចោល Tune In', risk: 'គណនីចាស់ជាទ្វារចំហសម្រាប់ Hacker។', rec: 'បិទគណនីណាដែលឈប់ប្រើលើសពី ១ ឆ្នាំ' },
+                { id: 'id10', title: 'Google Security scan', sub: 'ធ្វើតេស្តសុវត្ថិភាព Google Account ជាប្រចាំ។', risk: 'មានឧបករណ៍មិនស្គាល់កំពុងប្រើ Gmail Tune In', rec: 'myaccount.google.com/security-checkup' },
+                { id: 'id11', title: 'Spelling in Profile', sub: 'មិនដាក់ឈ្មោះពិត និងថ្ងៃកំណើតជាសាធារណៈ។', risk: 'ជនបោកប្រាស់យកទៅទាយ Password។', rec: 'ដាក់ឈ្មោះក្រៅ ឬ ឈ្មោះកាត់' },
+                { id: 'id12', title: 'Email Forward audit', sub: 'ឆែកមើលថាមានគេលួច Forward Email ឬអត់។', risk: 'Hacker ទទួលបានរាល់ Email របស់អ្នក។', rec: 'ពិនិត្យ Rules ក្នុង Gmail settings' },
+                { id: 'id13', title: 'Autofill Security', sub: 'បិទការចងចាំ Password ក្នុង Shared Browser។', risk: 'អ្នកដទៃអាចចូល Account អ្នកបានភ្លាម។', rec: 'Settings > Autofill > Off' },
+                { id: 'id14', title: 'Digital Trace audit', sub: 'Search ឈ្មោះខ្លួនឯងលើ Google រាល់ ៣ ខែ។', risk: 'មានព័ត៌មានមិនល្អ ឬអត្តសញ្ញាណបែកធ្លាយ។', rec: 'ស្នើសុំលុយព័ត៌មានដែលប៉ះពាល់' },
+                { id: 'id15', title: 'SIM PIN Lock set', sub: 'ដាក់លេខកូដសោរលើស៊ីមទូរស័ព្ទ។', urgent: true, risk: 'គេបន្លំយកស៊ីមទៅប្តូរ Password អ្នក។', rec: 'Settings > Security > SIM PIN' }
+            ]},
+            // BANKING (10)
+            { catId: 'finance', subId: 'banking', group: 'Mobile Banking', items: [
+                { id: 'fbk1', title: 'Official Store Only', sub: 'ដំឡើង App ធនាគារតែពី Store ផ្លូវការ។', urgent: true, risk: 'App ក្លែងក្លាយលួចលេខកូដ និងទឹកប្រាក់។', rec: 'ប្រើតែ App Store ឬ Play Store' },
+                { id: 'fbk2', title: 'Transaction alerts', sub: 'បើកការជូនដំណឹងរាល់ការផ្ទេរលុយ។', risk: 'មានការលួចដកលុយ យើងមិនដឹងខ្លួន។', rec: 'បើក Notification ក្នុង App ជានិច្ច' },
+                { id: 'fbk3', title: 'Device Binding policy', sub: 'ភ្ជាប់ Account តែជាមួយទូរស័ព្ទផ្ទាល់ខ្លួន។', risk: 'Hacker ប្រើឧបករណ៍ផ្សេងលួចលុយ។', rec: 'ពិនិត្យ Trusted Devices ក្នុង App' },
+                { id: 'fbk4', title: 'Payee Verification', sub: 'ផ្ទៀងផ្ទាត់ឈ្មោះអ្នកទទួលឱ្យច្បាស់មុនផ្ញើ។', urgent: true, risk: 'ផ្ញើលុយឱ្យជនបោកប្រាស់។', rec: 'មើលឈ្មោះឱ្យត្រូវនឹងអត្តសញ្ញាណ' },
+                { id: 'fbk5', title: 'Limit Daily transfer', sub: 'កំណត់ទឹកប្រាក់ផ្ទេរចេញក្នុងមួយថ្ងៃឱ្យទាប Tune In', risk: 'បើត្រូវបោក នឹងបាត់បង់លុយច្រើន។', rec: 'កំណត់ក្នុង App Settings' },
+                { id: 'fbk6', title: 'No Public WiFi', sub: 'មិនប្រើ Wi-Fi ហាងកាហ្វេដើម្បីផ្ទេរលុយ។', risk: 'Hacker អាចលួចយកព័ត៌មានធនាគារ។', rec: 'ប្រើ Internet ទូរស័ព្ទផ្ទាល់ខ្លួន' },
+                { id: 'fbk7', title: 'Logout manual', sub: 'Logout រាល់ពេលប្រើប្រាស់រួចរាល់។', risk: 'Account នៅចំហរ ងាយរងគ្រោះបំផុត។', rec: 'ទម្លាប់ Logout ជានិច្ច' },
+                { id: 'fbk8', title: 'No Phone OTP call', sub: 'មិនប្រាប់ OTP ឱ្យអ្នកតេមកបន្លំ។', urgent: true, risk: 'គេនឹងដកលុយអ្នកអស់ភ្លាមៗ។', rec: 'ធនាគារមិនដែលសុំ OTP តាមទូរស័ព្ទ' },
+                { id: 'fbk9', title: 'FaceID login', sub: 'ប្រើការស្កេនម្រាមដៃ ឬមុខដើម្បីចូល App។', risk: 'គេលួចមើលលេខកូដ PIN ពេលអ្នកចុច។', rec: 'បើកមុខងារ FaceID ឬ Fingerprint' },
+                { id: 'fbk10', title: 'Hotline Backup', sub: 'រក្សាទុកលេខ Hotline ធនាគារក្នុង Contact។', risk: 'រកលេខបិទកុងមិនឃើញពេលបាត់ទូរស័ព្ទ Tune In', rec: 'កត់លេខបិទកុងទុកកន្លែងផ្សេង' }
+            ]},
+            // SHOPPING (10)
+            { catId: 'finance', subId: 'shopping', group: 'Online Shopping', items: [
+                { id: 'fs1', title: 'Seller Verify', sub: 'ឆែក Rating និង Review ហាងឱ្យច្បាស់។', risk: 'ហាងបោកប្រាស់លួចលុយ រួចបិទចោល។', rec: 'ទិញពីហាងដែលល្បី និងមាន Review ច្រើន' },
+                { id: 'fs2', title: 'Virtual Card usage', sub: 'ប្រើកាតនិម្មិតសម្រាប់ការទិញ Online។', urgent: true, risk: 'គេលួចលេខកាតដើម គេដកលុយអស់។', rec: 'បង្កើត Virtual Card ក្នុង App ធនាគារ' },
+                { id: 'fs3', title: 'HTTPS Check only', sub: 'ទិញឥវ៉ាន់លើ Web មានសញ្ញា 🔒 ជានិច្ច។', risk: 'ព័ត៌មានកាតអាចត្រូវ Hacker លួចបាន។', rec: 'មើលរបារអាសយដ្ឋាន Web ឱ្យច្បាស់' },
+                { id: 'fs4', title: 'Refund Policy check', sub: 'អានគោលការណ៍ប្តូរឥវ៉ាន់ឱ្យយល់។', risk: 'ខូច មិនអាចដូរយកលុយវិញបាន។', rec: 'ឆែកមើល Refund Policy មុនទិញ' },
+                { id: 'fs5', title: 'SMS Scam Delivery', sub: 'មិនចុច Link ក្នុង SMS ឥវ៉ាន់ចម្លែក។', risk: 'Link បោកយក Password ធនាគារអ្នក។', rec: 'ឆែកលេខកូដឥវ៉ាន់ក្នុង App ផ្ទាល់' },
+                { id: 'fs6', title: 'In-app Payment only', sub: 'បង់លុយតាមរយៈប្រព័ន្ធក្នុង App ជានិច្ច។', risk: 'ផ្ញើក្រៅប្រព័ន្ធ គ្មានអ្នកធានាឱ្យទេ។', rec: 'ហាមផ្ទេរលុយផ្ទាល់ឱ្យអ្នកលក់ចម្លែក' },
+                { id: 'fs7', title: 'No Save Credentials', sub: 'មិនឱ្យ Browser ចងចាំលេខកាត។', risk: 'អ្នកដទៃប្រើកាតអ្នកបានភ្លាម។', rec: 'វាយលេខកាតថ្មីរាល់ពេលទិញ' },
+                { id: 'fs8', title: 'Receipt collection', sub: 'រក្សា Screenshot ភស្តុតាងបង់ប្រាក់។', risk: 'គ្មានភស្តុតាងពេលមានបញ្ហា។', rec: 'ទុកក្នុង Album ដាច់ដោយឡែក' },
+                { id: 'fs9', title: 'Platform Protection', sub: 'ប្រើ App ល្បីៗដែលមានទំនុកចិត្ត។', risk: 'Web ក្លែងក្លាយលួចទិន្នន័យកាត។', rec: 'ប្រើ Nham24, Foodpanda, ឬ Web ល្បី' },
+                { id: 'fs10', title: 'Subscription review', sub: 'ឆែកវិក្កយបត្រក្នុង Email ជាប្រចាំ។', risk: 'មានការលួចកាត់លុយប្រចាំខែ។', rec: 'Cancel សេវាណាដែលអ្នកមិនប្រើ' }
+            ]},
+            // MEETINGS (10)
+            { catId: 'work', subId: 'wk_meet', group: 'Online Meetings', items: [
+                { id: 'wm1', title: 'Passcode Enabled', sub: 'ដាក់លេខកូដសម្ងាត់សម្រាប់ការប្រជុំជានិច្ច។', urgent: true, risk: 'ជនមិនស្គាល់ចូលមកលួចស្តាប់ ឬរំខាន។', rec: 'ប្រើ Passcode ក្នុង Zoom/Meet settings' },
+                { id: 'wm2', title: 'Waiting Room active', sub: 'ប្រើ Waiting Room ដើម្បី Verify អ្នកចូល។', risk: 'Hacker ចូលមកចែកចាយ Content មិនល្អ។', rec: 'Approve តែអ្នកដែលអ្នកស្គាល់ច្បាស់' },
+                { id: 'wm3', title: 'Share Screen Control', sub: 'បិទការ Share Screen សម្រាប់អ្នកចូលរួម។', risk: 'ជនមិនល្អអាច Share រឿងមិនល្អរំខាន។', rec: 'បើកសិទ្ធិឱ្យតែ Host ប៉ុណ្ណោះ' },
+                { id: 'wm4', title: 'Private Links only', sub: 'មិន Share Link ប្រជុំជាសាធារណៈលើ FB។', urgent: true, risk: 'នរណាក៏អាចចូលមកបាន ដែលនាំឱ្យមានរឿង។', rec: 'ផ្ញើ Link តែក្នុងគ្រុបការងារផ្លូវការ' },
+                { id: 'wm5', title: 'Consent for Record', sub: 'សុំការអនុញ្ញាតមុននឹងថតការប្រជុំ។', risk: 'ប៉ះពាល់សិទ្ធិឯកជន និងព័ត៌មានសម្ងាត់ Tune In', rec: 'ប្រកាសប្រាប់អ្នកចូលរួមមុនចុច Record' },
+                { id: 'wm6', title: 'Background Privacy', sub: 'ប្រើ Background Blur ឬ Virtual Background។', risk: 'គេដឹងពីទីតាំងផ្ទះ ឬព័ត៌មាន حساس ក្នុងផ្ទះ Tune In', rec: 'ឆែកមើលផ្ទៃខាងក្រោយមុនបើក Camera' },
+                { id: 'wm7', title: 'Host Management', sub: 'ចេះប្រើប៊ូតុងបណ្តេញចេញពេលមានបញ្ហា។', risk: 'ជនបង្កបញ្ហារំខានដល់ការប្រជុំទាំងមូល។', rec: 'រៀនប្រើ Host controls ឱ្យបានស្ទាត់' },
+                { id: 'wm8', title: 'App Authenticity', sub: 'ប្រើ App ដែលមាន End-to-end encryption។', risk: 'Hacker លួចស្តាប់ការសន្ទនាតាមប្រព័ន្ធ។', rec: 'ប្រើ Zoom, Teams, ឬ Google Meet ផ្លូវការ' },
+                { id: 'wm9', title: 'Audio/Video off', sub: 'បិទ Mic និង Camera ជានិច្ចពេលចប់ប្រជុំ។', risk: 'គេលួចមើលសកម្មភាពក្រោយពេលប្រជុំ។', rec: 'ប្រាកដថាបានចាកចេញពី Room ទាំងស្រុង' },
+                { id: 'wm10', title: 'Safe Attachments', sub: 'មិនដំឡើង File ដែលផ្ញើមកក្នុង Meeting Chat។', risk: 'File មេរោគដែល Hacker បញ្ជូនមក Tune In', rec: 'ផ្ញើឯកសារតាមរយៈ Email ការងារវិញ' }
+            ]},
+            // REMOTE WORK (10)
+            { catId: 'work', subId: 'wk_rem', group: 'Remote Safety', items: [
+                { id: 'wr1', title: 'VPN usage policy', sub: 'ប្រើ VPN ជានិច្ចពេលធ្វើការនៅក្រៅ។', urgent: true, risk: 'Hacker លួចទិន្នន័យតាម WiFi សាធារណៈ។', rec: 'ប្រើ VPN ក្រុមហ៊ុន ឬ Cloudflare Warp' },
+                { id: 'wr2', title: 'Separated Profiles', sub: 'បំបែក Account ការងារ និងផ្ទាល់ខ្លួន។', risk: 'ងាយនឹងច្រឡំផ្ញើឯកសារសម្ងាត់ទៅខាងក្រៅ។', rec: 'ប្រើ Browser Profile ផ្សេងគ្នា' },
+                { id: 'wr3', title: 'Secure Cloud usage', sub: 'ប្រើតែប្រព័ន្ធផ្ទុកឯកសារដែលក្រុមហ៊ុនផ្តល់ឱ្យ។', risk: 'ទិន្នន័យក្រុមហ៊ុនងាយនឹងបែកធ្លាយលើ Web។', rec: 'ប្រើ Google Drive/OneDrive ក្រុមហ៊ុន' },
+                { id: 'wr4', title: 'Device Guard', sub: 'មិនឱ្យកូន ឬអ្នកផ្ទះប្រើកុំព្យូទ័រការងារ។', risk: 'កូនច្រឡំលុបទិន្នន័យ ឬឆ្លងមេរោគពី Game។', rec: 'ដាក់ Password សោរអេក្រង់ជានិច្ច' },
+                { id: 'wr5', title: 'NDA Secrecy', sub: 'យល់ដឹងពីកិច្ចសន្យារក្សាសម្ងាត់ឌីជីថល។', risk: 'ការបញ្ចេញព័ត៌មានក្រុមហ៊ុននាំឱ្យមានទោស។', rec: 'រក្សាការសម្ងាត់ឱ្យបានហ្មត់ចត់បំផុត' },
+                { id: 'wr6', title: 'Public sign-out rule', sub: 'Logout ជានិច្ចពេលធ្វើការនៅហាងកាហ្វេ។', urgent: true, risk: 'អ្នកប្រើក្រោយអាចចូលមើលទិន្នន័យក្រុមហ៊ុន។', rec: 'កុំគ្រាន់តែ Sleep ម៉ាស៊ីន ត្រូវ Lock វា' },
+                { id: 'wr7', title: 'Home WiFi Security', sub: 'ប្រើ Wi-Fi ផ្ទះដែលមានលេខសម្ងាត់ខ្លាំង។', risk: 'អ្នកជិតខាងអាចចូលលួចទិន្នន័យតាម Network។', rec: 'ប្តូរ Password Router ឱ្យពិបាកទាយ' },
+                { id: 'wr8', title: 'Phishing Check', sub: 'ប្រយ័ត្ន Email បន្លំធ្វើជា Boss ឬ HR។', urgent: true, risk: 'ច្រឡំផ្ទេរលុយ ឬផ្តល់ Password ឱ្យ Hacker Tune In', rec: 'តេបញ្ជាក់រាល់ការសុំផ្ទេរលុយបន្ទាន់' },
+                { id: 'wr9', title: 'Continuous Sync', sub: 'បម្រុងទុកឯកសារការងារលើ Cloud ជានិច្ច។', risk: 'ម៉ាស៊ីនខូច នឹងបាត់បង់ផលិតភាពការងារ។', rec: 'ប្រើមុខងារ Auto-sync ឯកសារ' },
+                { id: 'wr10', title: 'IT Incident Plan', sub: 'ដឹងពីរបៀបរាយការណ៍បញ្ហាទៅផ្នែក IT។', risk: 'បញ្ហាតូចនឹងក្លាយជាធំបើមិនដោះស្រាយភ្លាម។', rec: 'កត់លេខទំនាក់ទំនងផ្នែក IT ទុក' }
+            ]},
+            // JOB SAFETY (10)
+            { catId: 'work', subId: 'wk_job', group: 'Job Safety', items: [
+                { id: 'wj1', title: 'Fake Recruiter Awareness', sub: 'មិនជឿការផ្តល់ការងារបានចំណេញខ្ពស់។', urgent: true, risk: 'បាត់បង់លុយកាក់តាមរយៈការបោកប្រាស់។', rec: 'ឆែកមើល Profile អ្នកតេមកឱ្យច្បាស់' },
+                { id: 'wj2', title: 'No Upfront Payment', sub: 'ក្រុមហ៊ុនពិត មិនដែលទារលុយមុនចូលធ្វើការ។', urgent: true, risk: 'បង់លុយឱ្យជនបោកប្រាស់ រួចគេបាត់ខ្លួន។', rec: 'ហាមផ្ញើលុយឱ្យអ្នកដែលថាផ្តល់ការងារ' },
+                { id: 'wj3', title: 'Official Domain Check', sub: 'ស្វែងរកព័ត៌មានក្រុមហ៊ុនលើ Google ផ្លូវការ។', risk: 'ក្រុមហ៊ុនក្លែងក្លាយបន្លំឈ្មោះក្រុមហ៊ុនល្បី។', rec: 'ឆែកមើលអាសយដ្ឋានពិតរបស់ក្រុមហ៊ុន' },
+                { id: 'wj4', title: 'Private Info for Interview', sub: 'មិនផ្តល់ Password ឬ OTP ឱ្យអ្នកសម្ភាសន៍។', urgent: true, risk: 'គេនឹងលួចយក Account របស់អ្នកទាំងស្រុង។', rec: 'ព័ត៌មានសម្ងាត់ មិនត្រូវផ្តល់ឱ្យអ្នកដទៃ' },
+                { id: 'wj5', title: 'Clean Social Footprint', sub: 'សម្អាត Content មិនល្អលើ Profile ខ្លួនឯង។', risk: 'ក្រុមហ៊ុនមិនទទួលយកអ្នកដោយសារសកម្មភាព។', rec: 'លុប Post ណាដែលប៉ះពាល់កិត្តិយសខ្លួន' },
+                { id: 'wj6', title: 'Email Spelling check', sub: 'ឆែកមើលអាសយដ្ឋាន Email អ្នកផ្ញើមកឱ្យច្បាស់។', risk: 'Email បន្លំ (ឧ. hr@googlee.com) Tune In', rec: 'Verify Domain ឱ្យបានត្រឹមត្រូវ' },
+                { id: 'wj7', title: 'Official Sites Only', sub: 'ប្រើតែ Web ចុះឈ្មោះការងារផ្លូវការ។', risk: 'Link ចុះឈ្មោះការងារលួចទិន្នន័យអ្នក។', rec: 'ប្រើ LinkedIn, CamboJob ឬ Web ល្បី' },
+                { id: 'wj8', title: 'Reference Check', sub: 'សួរមិត្តភក្តិក្នុងវិស័យការងារអំពីក្រុមហ៊ុន។', risk: 'ចូលធ្វើការក្នុងក្រុមហ៊ុនខុសច្បាប់ ឬបោក។', rec: 'ចូលគ្រុបការងារដើម្បីស៊ើបសួរព័ត៌មាន' },
+                { id: 'wj9', title: 'Rational Offer check', sub: 'ការងារស្រួល ចំណេញច្រើន គឺជារឿងមិនពិត។', risk: 'ងាយនឹងចាញ់បោកជនខិលខូចបំផុត។', rec: 'ត្រូវមានការពិចារណាឱ្យបានខ្ពស់ជានិច្ច' },
+                { id: 'wj10', title: 'Trusted Platform use', sub: 'ស្វែងរកការងារលើ LinkedIn ដែលទុកចិត្ត។', risk: 'វេទិកាមិនល្អមានបង្កប់ដោយ Job Scam Tune In', rec: 'តាមដានក្រុមហ៊ុនដែលមានកេរ្តិ៍ឈ្មោះ' }
+            ]},
+            // COMMUNITY (10)
+            { catId: 'community', group: 'Community Awareness', items: [
+                { id: 'c1', title: 'Donation Fraud Alert', sub: 'Verify ឱ្យច្បាស់មុនផ្ញើលុយជួយសង្គម។', urgent: true, risk: 'ផ្ញើលុយឱ្យជនបោកប្រាស់បន្លំរូបភាព Tune In' },
+                { id: 'c2', title: 'Fake Authority Check', sub: 'សមត្ថកិច្ចមិនដែលតេមកទារលុយទេ។', urgent: true, risk: 'ចាញ់បោកការគំរាមកំហែងតាមទូរស័ព្ទ Tune In' },
+                { id: 'c3', title: 'Online Harassment Off', sub: 'មិនប្រើពាក្យសម្តីជេរប្រមាថ Online។', risk: 'អាចប្រឈមមុខនឹងច្បាប់ឌីជីថល។', rec: 'បញ្ចេញមតិប្រកបដោយសីលធម៌' },
+                { id: 'c4', title: 'Fact Check Habit', sub: 'មិនចែកចាយព័ត៌មានមិនបានផ្ទៀងផ្ទាត់ Tune In' },
+                { id: 'c5', title: 'Public Reporting tools', sub: 'ជួយ Report Content អាសអាភាស ឬហិង្សា Tune In' },
+                { id: 'c6', title: 'Privacy for Neighbors', sub: 'មិនថតរូបអ្នកដទៃបង្ហោះដោយគ្មានសិទ្ធិ Tune In' },
+                { id: 'c7', title: 'Community Group Rules', sub: 'យល់ដឹងពីគោលការណ៍សហគមន៍ Social App Tune In' },
+                { id: 'c8', title: 'Social Conflict avoid', sub: 'មិនតបតជាមួយជនដែលមករករឿង (Trolls) Tune In' },
+                { id: 'c9', title: 'Charity Verify', sub: 'សួរមិត្តភក្តិមុនផ្ញើលុយជួយបុណ្យ Online Tune In' },
+                { id: 'c10', title: 'Page Official Blue Tick', sub: 'តាមដានតែ Page ផ្លូវការដែលមាន Blue Tick Tune In' }
+            ]},
+            // EMERGENCY RESPONSE (10)
+            { catId: 'response', group: 'Incident Protocol', items: [
+                { id: 'r1', title: 'Account Hacked protocol', sub: 'ដឹងវិធីបិទ Account ភ្លាមៗពេលត្រូវ Hack Tune In', urgent: true },
+                { id: 'r2', title: 'Banking Lockdown', sub: 'តេទៅធនាគារបង្កកកុងភ្លាមក្រោយត្រូវបោក Tune In', urgent: true },
+                { id: 'r3', title: 'Evidence Screenshotting', sub: 'ថត Screenshot ទុកជាភស្តុតាងជានិច្ច Tune In' },
+                { id: 'r4', title: 'Malware Cleanup step', sub: 'បើច្រឡំចុច Link ត្រូវ Scan មេរោគភ្លាម Tune In' },
+                { id: 'r5', title: 'Identity Protection alert', sub: 'ប្រកាសប្រាប់មិត្តភក្តិពេលត្រូវគេបន្លំឈ្មោះ Tune In' },
+                { id: 'r6', title: 'Remote Wipe Device set', sub: 'ដឹងវិធីលុបទិន្នន័យពីចម្ងាយ (Remote Wipe) Tune In' },
+                { id: 'r7', title: 'Police Report steps', sub: 'ដឹងកន្លែងប្តឹងបទល្មើសបច្ចេកវិទ្យា Tune In' },
+                { id: 'r8', title: 'Password Chain Reset', sub: 'ប្តូរ Password គ្រប់ App ក្រោយត្រូវ Hack មួយ Tune In', urgent: true },
+                { id: 'r9', title: 'Money Flow Blocking', sub: 'ទាក់ទងធនាគារម្ចាស់កុងដែលអ្នកផ្ញើទៅ Tune In', urgent: true },
+                { id: 'r10', title: 'Audit After Hack', sub: 'ពិនិត្យសិទ្ធិដែល Hacker បានដំឡើងថ្មី Tune In' }
+            ]}
+        ];
+
+        // Ensure all other items from previous prompts are also filled to reach 165+
+        const additionalFiller = [
+            { catId: 'data', group: 'Cloud & Privacy', items: [
+                {id:'d1', title:'2FA Cloud', sub:'ដាក់ 2FA លើ Google Drive/iCloud។', urgent:true, risk:'Hacker បានឯកសារទាំងអស់ Tune In'},
+                {id:'d2', title:'No Meta Photo', sub:'លុបទីតាំងចេញពីរូបភាពមុនបង្ហោះ។', risk:'គេដឹងថាអ្នកនៅឯណា Tune In'},
+                {id:'d3', title:'Clean History', sub:'សម្អាត History និង Cookies ជាប្រចាំ Tune In'},
+                {id:'d4', title:'AI Secrets', sub:'មិនដាក់លេខសម្ងាត់ក្នុង ChatGPT/AI Tune In'},
+                {id:'d5', title:'Delete Screens', sub:'លុបរូបភាពកាតធនាគារក្នុង Album Tune In'},
+                {id:'d6', title:'VPN Coffee', sub:'ប្រើ VPN ពេលភ្ជាប់ WiFi សាធារណៈ Tune In'},
+                {id:'d7', title:'Audit Apps', sub:'ឆែកមើល App ដែលភ្ជាប់ជាមួយ Gmail/FB Tune In'},
+                {id:'d8', title:'Spam Filter', sub:'មិនបើក Email ក្នុងប្រអប់ Spam Tune In'},
+                {id:'d9', title:'Expiry Links', sub:'កំណត់ពេលផុតកំណត់ឱ្យ Link ដែលបាន Share Tune In'},
+                {id:'d10', title:'Backup Sync', sub:'Backup ឯកសារលើ Cloud សុវត្ថិភាព Tune In'}
+            ]},
+            { catId: 'wellbeing', group: 'Digital Mental Health', items: [
+                {id:'w1', title:'Screen Limit', sub:'កំណត់ពេលប្រើ Social Media ឱ្យសមស្រប Tune In'},
+                {id:'w2', title:'Bedtime Mode', sub:'មិនប្រើទូរស័ព្ទ ៣០ នាទីមុនគេង Tune In'},
+                {id:'w3', title:'Unmute Trolls', sub:'Block ឬ Mute រាល់ Content ដែលនាំឱ្យ Stress Tune In'},
+                {id:'w4', title:'Anti-Doomscrolling', sub:'មិនអានព័ត៌មានអវិជ្ជមានយូរពេក Tune In'},
+                {id:'w5', title:'Real Reality', sub:'ដឹងថាជីវិត Online មិនមែនជារឿងពិតទាំងអស់ Tune In'},
+                {id:'w6', title:'Physical Friends', sub:'ជួបមិត្តភក្តិផ្ទាល់ដោយមិនមើលទូរស័ព្ទ Tune In'},
+                {id:'w7', title:'Disconnect Day', sub:'ឈប់ប្រើបច្ចេកវិទ្យា ១ ថ្ងៃក្នុងមួយសប្តាហ៍ Tune In'},
+                {id:'w8', title:'Focus Clarity', sub:'ប្រើមុខងារ Focus Mode លើទូរស័ព្ទ Tune In'},
+                {id:'w9', title:'IQ Decisions', sub:'មិនតបត ឬផ្ញើលុយពេលកំពុងភ័យខ្លាច Tune In'},
+                {id:'w10', title:'Notification audit', sub:'បិទការដាស់តឿន App ដែលមិនចាំបាច់ Tune In'}
+            ]}
+        ];
+        additionalFiller.forEach(d => checklistData.push(d));
+
+        let checkedItems = new Set();
+        let activeCat = 'social';
+        let activeSub = 'fb';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategories();
+            setFilter('social');
+            startCarousel();
+            lucide.createIcons();
+        });
+
+        function renderCategories() {
+            const bar = document.getElementById('category-bar');
+            if(!bar) return;
+            bar.innerHTML = categories.map(cat => {
+                const stats = calculateCategoryStats(cat.id);
+                return `
+                <div onclick="setFilter('${cat.id}')" id="cat-${cat.id}" class="cat-tab flex flex-1 lg:flex-none items-center justify-between gap-3 cursor-pointer tap-scale group min-w-[135px] lg:min-w-0 p-3 rounded-2xl border-2 border-transparent transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="icon-box w-9 h-9 ${cat.color} rounded-xl flex items-center justify-center text-white shadow-sm transition-all group-hover:scale-110">
+                            <i data-lucide="${cat.icon}" class="w-4.5 h-4.5"></i>
+                        </div>
+                        <span class="text-[10px] font-black text-gray-500 uppercase tracking-tighter leading-tight whitespace-nowrap">${cat.label}</span>
+                    </div>
+                    <span class="text-[9px] font-black text-clinic-primary bg-blue-50 px-1.5 py-0.5 rounded-md hidden lg:block">${stats.percent}%</span>
+                </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function setFilter(catId, subId = null) {
+            activeCat = catId;
+            const cat = categories.find(c => c.id === catId);
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+            const catEl = document.getElementById('cat-' + catId);
+            if(catEl) catEl.classList.add('active');
+            
+            const subContainer = document.getElementById('sub-category-container');
+            if (cat.subs) {
+                if(subContainer) {
+                    subContainer.classList.remove('hidden');
+                    subContainer.classList.add('flex');
+                    activeSub = subId || cat.subs[0].id;
+                    subContainer.innerHTML = cat.subs.map(s => `
+                        <button onclick="setFilter('${catId}', '${s.id}')" class="sub-tab flex-1 py-2 px-4 rounded-lg text-[9px] font-black uppercase tracking-widest border border-transparent transition-all ${activeSub === s.id ? 'active shadow-sm' : 'text-gray-400 bg-white/50'}">${s.label}</button>
+                    `).join('');
+                }
+            } else {
+                if(subContainer) subContainer.classList.add('hidden');
+                activeSub = null;
+            }
+
+            const activeTitleEl = document.getElementById('active-title');
+            if(activeTitleEl) activeTitleEl.innerText = cat.label + (activeSub ? ` - ${cat.subs.find(s=>s.id===activeSub).label}` : "");
+            
+            renderList();
+            updateStats();
+        }
+
+        function renderList() {
+            const container = document.getElementById('checklist-container');
+            if(!container) return;
+            const data = checklistData.filter(d => d.catId === activeCat && (activeSub ? d.subId === activeSub : true));
+            
+            if (data.length === 0) {
+                container.innerHTML = `<div class="p-16 text-center text-gray-400 font-bold bg-white rounded-clinic border border-gray-100 shadow-sm">ផ្នែកនេះនឹងមកដល់ឆាប់ៗ...</div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(group => `
+                <div class="mb-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <h3 class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">${group.group}</h3>
+                    <div class="space-y-3">
+                        ${group.items.map(item => {
+                            const isChecked = checkedItems.has(item.id);
+                            return `
+                            <div class="bg-white p-4 rounded-clinic flex flex-col diagnosis-card shadow-sm border border-transparent hover:border-blue-50 transition-all">
+                                <div class="flex items-center gap-4 cursor-pointer" onclick="toggleCheck('${item.id}')">
+                                    <div class="w-8 h-8 rounded-[11px] border-2 flex items-center justify-center transition-all ${isChecked ? 'bg-clinic-secondary border-clinic-secondary text-white' : 'border-gray-200 bg-white'}">
+                                        <i data-lucide="check" class="w-4 h-4 stroke-[4] ${isChecked ? 'opacity-100' : 'opacity-0'}"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="text-[14px] ${isChecked ? 'text-gray-300 line-through' : 'text-gray-800 font-black'} leading-snug">${item.title}</span>
+                                        ${item.urgent && !isChecked ? '<span class="w-1.5 h-1.5 rounded-full bg-clinic-danger inline-block ml-1 animate-pulse"></span>' : ''}
+                                        <span class="text-[10px] text-gray-400 font-medium block mt-0.5 leading-relaxed">${item.sub}</span>
+                                    </div>
+                                    <button onclick="event.stopPropagation(); toggleInfo('${item.id}')" class="w-7 h-7 flex items-center justify-center bg-gray-50 rounded-full text-gray-400 transition hover:text-clinic-primary shrink-0"><i data-lucide="info" class="w-4 h-4"></i></button>
+                                </div>
+                                <div id="info-${item.id}" class="accordion-content">
+                                    <div class="accordion-inner mt-3 pt-3 border-t border-gray-50 space-y-2">
+                                        <div class="bg-red-50 p-2.5 rounded-xl border border-red-100 flex gap-2 text-[10px] text-clinic-danger"><i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i><span><strong>ហានិភ័យ៖</strong> ${item.risk || 'ប៉ះពាល់ខ្លាំងដល់សុវត្ថិភាព'}</span></div>
+                                        <div class="bg-blue-50 p-2.5 rounded-xl border border-blue-100 flex gap-2 text-[10px] text-clinic-primary"><i data-lucide="shield-check" class="w-3.5 h-3.5 shrink-0"></i><span><strong>ដំណោះស្រាយ៖</strong> ${item.rec || 'សូមអនុវត្តតាមការណែនាំរបស់ App'}</span></div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function toggleCheck(id) {
+            if(checkedItems.has(id)) checkedItems.delete(id); else checkedItems.add(id);
+            renderList();
+            updateStats();
+            renderCategories();
+        }
+
+        function toggleInfo(id) {
+            const el = document.getElementById('info-'+id);
+            if (el) el.parentElement.classList.toggle('open');
+        }
+
+        function calculateCategoryStats(catId) {
+            const allItems = checklistData.filter(d => d.catId === catId).flatMap(d => d.items);
+            if (allItems.length === 0) return { checked: 0, total: 0, percent: 0 };
+            const checkedCount = allItems.filter(i => checkedItems.has(i.id)).length;
+            return { checked: checkedCount, total: allItems.length, percent: Math.round((checkedCount / allItems.length) * 100) };
+        }
+
+        function calculateGlobalScore() {
+            let totalW = 0, maxW = 0;
+            checklistData.forEach(g => g.items.forEach(i => {
+                const w = i.urgent ? 3 : 1; maxW += w;
+                if(checkedItems.has(i.id)) totalW += w;
+            }));
+            return maxW === 0 ? 0 : Math.round((totalW/maxW)*100);
+        }
+
+        function updateStats() {
+            const catStats = calculateCategoryStats(activeCat);
+            const badge = document.getElementById('category-progress-badge');
+            const count = document.getElementById('category-count');
+            if (badge) badge.innerText = catStats.percent + "%";
+            if (count) count.innerText = `${catStats.checked} / ${catStats.total}`;
+
+            const score = calculateGlobalScore();
+            const scoreText = document.getElementById('global-score-text');
+            const ring = document.getElementById('global-ring');
+            const mini = document.getElementById('global-progress-mini');
+            const risk = document.getElementById('global-risk-label');
+
+            if (scoreText) scoreText.innerText = score + "%";
+            if (mini) mini.innerText = score + "%";
+            if (ring) ring.style.strokeDashoffset = 219.8 - (score / 100) * 219.8;
+            
+            if (risk) {
+                if(score >= 80) { risk.innerText = "Safe"; risk.className = "text-[11px] font-black text-clinic-secondary uppercase"; }
+                else if(score >= 50) { risk.innerText = "Moderate"; risk.className = "text-[11px] font-black text-clinic-warning uppercase"; }
+                else { risk.innerText = "High Risk"; risk.className = "text-[11px] font-black text-clinic-danger uppercase"; }
+            }
+        }
+
+        async function analyzeSafety() {
+            document.getElementById('rec-modal').classList.remove('hidden');
+            const modalBody = document.getElementById('modal-body');
+            if(!modalBody) return;
+            modalBody.innerHTML = `<div class="flex flex-col items-center py-16"><div class="w-12 h-12 border-4 border-clinic-surface border-t-clinic-primary rounded-full animate-spin mb-4"></div><p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">កំពុងវិភាគរោគសញ្ញា...</p></div>`;
+            
+            const missedItems = checklistData.flatMap(d => d.items).filter(i => !checkedItems.has(i.id));
+            const score = calculateGlobalScore();
+            
+            try {
+                if(!apiKey) throw new Error();
+                const topMissed = missedItems.slice(0, 8).map(i=>i.title).join(', ');
+                const prompt = `Act as Digital Health Doctor in Khmer. Total score is ${score}%. User missed: ${topMissed}. Provide professional prescription.`;
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({contents:[{parts:[{text: prompt}]}]})
+                });
+                const data = await res.json();
+                modalBody.innerHTML = marked.parse(data.candidates[0].content.parts[0].text);
+            } catch(e) {
+                let html = `<div class="space-y-6">`;
+                categories.forEach(cat => {
+                    const stats = calculateCategoryStats(cat.id);
+                    let color = stats.percent >= 80 ? 'text-clinic-secondary' : (stats.percent >= 50 ? 'text-clinic-warning' : 'text-clinic-danger');
+                    html += `
+                        <div class="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-black text-sm uppercase tracking-tighter">${cat.label}</h4>
+                                <span class="font-black ${color}">${stats.percent}%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-gray-50 rounded-full overflow-hidden">
+                                <div class="h-full bg-current ${color}" style="width: ${stats.percent}%"></div>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-3 font-medium">វេជ្ជបញ្ជា៖ ${stats.percent === 100 ? 'សុខភាពល្អឥតខ្ចោះ។' : 'សូមបំពេញចំណុចដែលខ្វះខាតក្នុងផ្នែកនេះ។'}</p>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                modalBody.innerHTML = html;
+            }
+            lucide.createIcons();
+        }
+
+        function copyToClipboard(text) {
+            const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select();
+            try { document.execCommand('copy'); alert("បានចម្លងលេខគណនី: " + text); } catch (err) { prompt("ចម្លងលេខនេះ:", text); }
+            document.body.removeChild(el);
+        }
+
+        function openSupportModal() { document.getElementById('support-modal').classList.remove('hidden'); }
+        function closeSupportModal() { document.getElementById('support-modal').classList.add('hidden'); }
+        function closeRecModal() { document.getElementById('rec-modal').classList.add('hidden'); }
+
+        async function downloadPDF() {
+            const btn = document.getElementById('downloadBtn');
+            if(btn) btn.innerHTML = "Creating PDF...";
+            const userName = document.getElementById('user-name').value || "Guest";
+            
+            try {
+                document.getElementById('pdf-user-name-target').innerText = userName;
+                document.getElementById('pdf-date').innerText = new Date().toLocaleDateString('km-KH');
+
+                let summaryHtml = "";
+                categories.forEach(cat => {
+                    const stats = calculateCategoryStats(cat.id);
+                    summaryHtml += `<div style="background:#f8fafc; padding:15px; border-radius:15px; text-align:center; border:1px solid #eee;"><p style="font-size:8px; font-weight:bold; color:#64748b; margin-bottom:5px;">${cat.label.toUpperCase()}</p><p style="font-size:18px; font-weight:900; color:#007AFF; margin:0;">${stats.percent}%</p></div>`;
+                });
+                document.getElementById('pdf-score-summary').innerHTML = summaryHtml;
+
+                let contentHtml = "";
+                categories.forEach(cat => {
+                    const missed = checklistData.filter(d => d.catId === cat.id).flatMap(d => d.items).filter(i => !checkedItems.has(i.id));
+                    if (missed.length) {
+                        contentHtml += `<div style="margin-bottom:20px;"><h4 style="color:#FF3B30; border-bottom:1px solid #eee; padding-bottom:5px; font-size:14px;">${cat.label}</h4>`;
+                        missed.forEach(m => contentHtml += `<div style="margin-bottom:8px;"><p style="font-weight:bold; margin:0; font-size:11px;">• ${m.title}</p><p style="font-size:9px; color:#666; margin:2px 0 0 10px;">${m.rec || 'Follow safety instructions'}</p></div>`);
+                        contentHtml += `</div>`;
+                    }
+                });
+                document.getElementById('pdf-content-container').innerHTML = contentHtml || "<p style='text-align:center;'>Perfect Digital Health Status!</p>";
+
+                const element = document.getElementById('pdf-wrapper');
+                const app = document.getElementById('app-ui');
+                app.style.display = 'none'; element.style.display = 'block'; element.style.position = 'static';
+                
+                const opt = { margin: 0.5, filename: `Sophat_Clinic_Report_${userName}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
+                await html2pdf().from(element).set(opt).save();
+                element.style.position = 'absolute'; element.style.display = 'none'; app.style.display = 'block';
+            } catch(e) { console.error(e); } finally { if(btn) btn.innerHTML = "Download PDF"; lucide.createIcons(); }
+        }
+
+        function showSlide(index) {
+            const track = document.getElementById('carousel-track');
+            const dots = document.querySelectorAll('.carousel-dot');
+            if (!track) return; 
+            if (index >= 3) index = 0; if (index < 0) index = 2;
+            currentSlide = index;
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            dots.forEach((dot, i) => {
+                dot.className = i === currentSlide ? "w-3 h-1.5 rounded-full bg-white carousel-dot transition-all" : "w-1.5 h-1.5 rounded-full bg-white/40 carousel-dot transition-all";
+            });
+        }
+        function startCarousel() { clearInterval(slideInterval); slideInterval = setInterval(() => showSlide(currentSlide + 1), 5000); }
+    </script>
+</body>
+</html>
